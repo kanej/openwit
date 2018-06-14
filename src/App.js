@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
+import React, { Component } from 'react'
 import Appbar from './components/appbar'
 import FeedIntroPanel from './components/feedIntroPanel'
-import './App.css';
+import './App.css'
 
 class App extends Component {
-  render() {
+  render () {
     const feed = {
       author: {
         name: 'Cicero'
@@ -18,23 +17,12 @@ class App extends Component {
     }
 
     return (
-      <div className="App">
-        <Appbar title="Openwit"/>
-        <FeedIntroPanel feed={feed}/>
-        <div>
-
-          <Button variant="contained" color="primary">
-            Follow
-          </Button>
-
-        </div>
-
-        <div>
-        </div>
-
+      <div className='App'>
+        <Appbar title='Openwit' />
+        <FeedIntroPanel feed={feed} />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
