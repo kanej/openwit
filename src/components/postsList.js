@@ -8,14 +8,19 @@ import Button from '@material-ui/core/Button'
 
 const styles = {
   postBox: {
-    margin: 10
+    margin: 100
+  },
+  postCardContent: {
+    textAlign: 'left'
   }
 }
 
 function PostsList (props) {
+  var { classes } = props
+
   var postCards = props.posts.map((post, index) => (
     <Card key={index}>
-      <CardContent>
+      <CardContent className={classes.postCardContent}>
         <p>{post}</p>
       </CardContent>
       <CardActions>
