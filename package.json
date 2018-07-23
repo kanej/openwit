@@ -4,25 +4,35 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.2.1",
+    "multihash": "^0.1.0",
     "permawit": "0.0.1-development",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-scripts": "1.1.4",
+    "truffle": "^4.1.13",
+    "web3": "^1.0.0-beta.34",
     "window.ipfs-fallback": "^1.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev:ganache": "ganache-cli -m \"ostrich high museum cheap fade about much voyage exist common deposit distance\""
   },
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
+    "eth-crypto": "^1.2.3",
+    "react-scripts": "^1.1.4",
     "standard": "^11.0.1"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "standard": {
+    "globals": [
+      "artifacts"
+    ]
   }
 }
