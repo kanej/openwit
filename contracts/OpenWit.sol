@@ -2,21 +2,25 @@ pragma solidity ^0.4.18;
 
 contract OpenWit {
   
-  struct Multihash {
-    bytes32 digest;
+  struct Cid {
+    uint8 version;
+    uint8 codec;
     uint8 hashFunction;
     uint8 size;
+    bytes32 digest;
   }
 
   event FeedUpdate(
     address indexed key,
-    bytes32 digest,
+    uint8 version,
+    uint8 codec,
     uint8 hashFunction,
-    uint8 size
+    uint8 size,
+    bytes32 digest
   );
 
   address owner;
-  Multihash feed;
+  Cid feed;
 
   constructor() public {
     owner = msg.sender;
@@ -24,20 +28,24 @@ contract OpenWit {
 
   /**
    * @dev Update the IPFS multihash representing the feed
-   * @param _digest hash digest produced by hashing content using hash function
-   * @param _hashFunction hashFunction code for the hash function used
+   * @param _version the cid version
+   * @param _codec the codec e.g. cbor
+   * @param _hash hashFunction code for the hash function used
    * @param _size length of the digest
+   * @param _digest hash digest produced by hashing content using hash function
    */
   //function setFeed(bytes32 _digest, uint8 _hashFunction, uint8 _size)
-  function setFeed(bytes32 _digest, uint8 _hashFunction, uint8 _size)
+  function setFeed(uint8 _version, uint8 _codec, uint8 _hash, uint8 _size, bytes32 _digest)
   public
   {
-    feed = Multihash(_digest, _hashFunction, _size);
+    feed = Cid(_version, _codec, _hash, _size, _digest);
     emit FeedUpdate(
-      msg.sender, 
-      _digest, 
-      _hashFunction, 
-      _size
+      msg.sender,
+      _version,
+      _codec,
+      _hash, 
+      _size, 
+      _digest
     );
   }
 
@@ -47,9 +55,9 @@ contract OpenWit {
   function getFeed()
   public
   view
-  returns(bytes32 digest, uint8 hashfunction, uint8 size)
+  returns(uint8 version, uint8 codec, uint8 hash, uint8 size, bytes32 digest)
   {
-    Multihash storage entry = feed;
-    return (entry.digest, entry.hashFunction, entry.size);
+    Cid storage entry = feed;
+    return (entry.version, entry.codec, entry.hashFunction, entry.size, entry.digest);
   }
 }

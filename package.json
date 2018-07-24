@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.2.1",
+    "cids": "^0.5.3",
     "multihash": "^0.1.0",
     "permawit": "0.0.1-development",
     "react": "^16.4.1",
@@ -32,7 +33,10 @@
   },
   "standard": {
     "globals": [
-      "artifacts"
+      "artifacts",
+      "contract",
+      "it",
+      "assert"
     ]
   }
 }

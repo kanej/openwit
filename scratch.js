@@ -1,30 +1,6 @@
 const fs = require('fs')
 const Web3 = require('web3')
-// const ganache = require('ganache-cli');
-
-const { getBytes32FromMultihash, getMultihashFromContractResponse } = require('./src/multihash')
-
-// const web3 = new Web3();
-
-// // create a ganache-provider
-// const ganacheProvider = ganache.provider({
-//     accounts: [
-//         // we preset the balance of our creatorIdentity to 10 ether
-//         {
-//             secretKey: userIdentity.privateKey,
-//             balance: web3.toWei('10', 'ether')
-//         },
-//         // we also give some wei to the recieverIdentity
-//         // so it can send transaction to the chain
-//         {
-//             secretKey: readerIdentity.privateKey,
-//             balance: web3.toWei('1', 'ether')
-//         }
-//     ]
-// });
-
-// // set ganache to web3 as provider
-// web3.setProvider(ganacheProvider);
+const { getBytesFromCidv1, getCidv1FromBytes } = require('./src/multihash')
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 
@@ -57,21 +33,22 @@ web3.eth.estimateGas({
     // e.g. check tx hash on the first call (transaction send)
 
       // console.log(feedInstance) // the contract address
-      const hash = 'QmahqCsAUAw7zMv6P6Ae8PjCTck7taQA6FgGQLnWdKG7U8'
-      const { digest, hashFunction, size } = getBytes32FromMultihash(hash)
+      const cid = 'zdpuAx8dA7mPWu91KixgDtBa5qH496iW6vmJzVpJqSKkgquoB'
+      const { version, codec, hash, size, digest } = getBytesFromCidv1(cid)
 
-      console.log(digest)
-      console.log(hashFunction)
-      console.log(size)
+      // console.log(version)
+      // console.log(codec)
+      // console.log(hash)
+      // console.log(size)
+      // console.log(digest)
 
       const response = await feedInstance.methods.setFeed(
-        digest,
-        hashFunction,
-        size).send({ from: senderAddress, gas: 300000 })
+        version,
+        codec,
+        hash,
+        size,
+        digest).send({ from: senderAddress, gas: 300000 })
 
       console.log(response)
-
-    // Note that the returned "myContractReturned" === "myContract",
-    // so the returned "myContractReturned" object will also get the address set.
     })
 })
