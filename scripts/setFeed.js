@@ -18,6 +18,7 @@ const setup = async () => {
   const accounts = await web3.eth.getAccounts()
 
   const contractInstance = await openWitContract.deployed()
+
   const cid = 'zdpuAqqmRH5FkZmsuWbopTpaXVDQ7PQyNDCd4GwHX6r17W7eU'
   const { version, codec, hash, size, digest } = getBytesFromCidv1(cid)
 
@@ -28,6 +29,8 @@ const setup = async () => {
     size,
     digest,
     { from: accounts[0] })
+
+  console.log('OpenWit address:', contractInstance.address)
 }
 
 setup()

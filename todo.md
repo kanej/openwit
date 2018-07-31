@@ -23,3 +23,4 @@ Features
 * [ ] Verify feed
     * [ ] structure
     * [ ] author
+* [ ] Transfer ownership

@@ -15,6 +15,12 @@ import contract from 'truffle-contract'
 
 import { fixTruffleContractCompatibilityIssue } from './utils/fixes'
 
+const mode = 'from-anchor-tag' // 'widget' 'hardcoded'
+
+const config = {
+  mode
+}
+
 // Setup a very simple async setup function to run on page load
 const setup = async () => {
   try {
@@ -33,8 +39,14 @@ const setup = async () => {
         const openWit = contract(OpenWitContract)
         openWit.setProvider(web3.currentProvider)
         fixTruffleContractCompatibilityIssue(openWit)
-        var contractInstance = await openWit.at('0xeed080e939b6d6cb306a5de44e03bab14cf2ac9f')
-        // openWit.options.address = '0xeed080e939b6d6cb306a5de44e03bab14cf2ac9f'
+        let contractAddress
+        if (config.mode === 'from-anchor-tag') {
+          contractAddress = window.location.hash.slice(1)
+        } else {
+          throw Error('Only anchor tag mode supported currently')
+        }
+
+        var contractInstance = await openWit.at(contractAddress)
 
         const [version, codec, hash, size, digest] = await contractInstance.getFeed()
         const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
