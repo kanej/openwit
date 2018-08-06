@@ -1,5 +1,6 @@
 # openwit
 
+[![CircleCI](https://circleci.com/gh/kanej/openwit.svg?style=svg&circle-token=83c03cba6469010356c56bed2d1d182db3548996)](https://circleci.com/gh/kanej/openwit)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square)](https://standardjs.com)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
@@ -15,6 +16,7 @@ This has been developed as my project for the Consensys Academy 2018 project.
 - [Background](#background)
 - [Install](#install)
 - [Usage](#usage)
+- [TODO](#todo)
 - [Maintainers](#maintainers)
 - [Contribute](#contribute)
 - [License](#license)
@@ -58,6 +60,10 @@ $ node ./scripts/setupFeed.js
 ```
 
 Refresh the development server
+
+## TODO
+
+See the [TODO file](./todo.md).
 
 ## Maintainers
 
