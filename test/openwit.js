@@ -26,4 +26,14 @@ contract('OpenWit', function (accounts) {
       assert.equal(getCidv1FromBytes({ version, codec, hash, size, digest }), cidv1, "The cid doesn't match")
     })
   })
+
+  it('...should allow retrieval of the owner of the contract', function () {
+    return SimpleTwit.deployed().then(function (instance) {
+      simpleStorageInstance = instance
+
+      return simpleStorageInstance.owner()
+    }).then(function (owner) {
+      assert.equal(accounts[0], owner)
+    })
+  })
 })

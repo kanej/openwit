@@ -15,7 +15,11 @@ class App extends Component {
 
     this.state = {
       mode: props.mode,
+      accounts: props.accounts,
+      address: props.address || null,
       feed: props.feed || null,
+      owner: null,
+      contract: null,
       getOpenWitFeed: props.getOpenWitFeed
     }
   }
@@ -25,14 +29,20 @@ class App extends Component {
         <div className='App'>
           <Appbar title='Openwit' />
           <ContractAddressInput onChange={(e) => this.contractAddressUpdate(e)} />
-          <FeedIntroPanel feed={this.state.feed} />
+          <FeedIntroPanel
+            owner={this.state.owner}
+            accounts={this.state.accounts}
+            feed={this.state.feed} />
         </div>
       )
     } else if (this.state.mode === 'from-anchor-tag') {
       return (
         <div className='App'>
           <Appbar title='Openwit' />
-          <FeedIntroPanel feed={this.state.feed} />
+          <FeedIntroPanel
+            owner={this.state.owner}
+            accounts={this.state.accounts}
+            feed={this.state.feed} />
         </div>
       )
     } else {
@@ -49,10 +59,15 @@ class App extends Component {
 
     console.log('Loadings address ' + address + ' ...')
 
-    this.state.getOpenWitFeed(address).then(feed => {
-      console.log(feed)
-      console.log(this.state)
-      this.setState({'feed': feed})
+    this.state.getOpenWitFeed(address).then(({feed, contract, owner}) => {
+      console.log('owner', owner)
+
+      this.setState({
+        'contract': contract,
+        'feed': feed,
+        'owner': owner,
+        'address': address
+      })
     }).catch(err => {
       throw err
     })
@@ -61,6 +76,7 @@ class App extends Component {
 
 App.propTypes = {
   mode: PropTypes.string.isRequired,
+  accounts: PropTypes.array.isRequired,
   feed: PropTypes.object
 }
 

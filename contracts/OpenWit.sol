@@ -19,7 +19,7 @@ contract OpenWit {
     bytes32 digest
   );
 
-  address owner;
+  address public owner;
   Cid feed;
 
   constructor() public {

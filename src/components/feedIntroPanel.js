@@ -21,8 +21,8 @@ const styles = theme => ({
   }
 })
 
-function AutoGrid (props) {
-  const { classes, feed } = props
+function FeedIntroPanel (props) {
+  const { classes, feed, owner, accounts } = props
 
   if (!feed) {
     return (
@@ -39,9 +39,18 @@ function AutoGrid (props) {
               <Avatar person={feed.author} />
               <h3>{feed.author.name}</h3>
               <h4>{feed.title}</h4>
-              <Button variant='contained' color='primary'>
+              {(() => {
+                if (owner === accounts[0].toLowerCase()) {
+                  return (<div />)
+                } else {
+                  return (
+                    <Button variant='contained' color='primary'>
                     Follow
-              </Button>
+                    </Button>
+                  )
+                }
+              })()}
+
             </Grid>
           </Grid>
 
@@ -55,9 +64,10 @@ function AutoGrid (props) {
   )
 }
 
-AutoGrid.propTypes = {
+FeedIntroPanel.propTypes = {
   classes: PropTypes.object.isRequired,
-  feed: PropTypes.object
+  feed: PropTypes.object,
+  owner: PropTypes.string
 }
 
-export default withStyles(styles)(AutoGrid)
+export default withStyles(styles)(FeedIntroPanel)

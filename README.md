@@ -61,6 +61,12 @@ $ node ./scripts/setupFeed.js
 
 Refresh the development server
 
+Run storybook
+
+```bash
+$ node .\node_modules\@storybook\react\bin\index.js -p 9090 -s public -c .\.storybook
+```
+
 ## TODO
 
 See the [TODO file](./todo.md).
