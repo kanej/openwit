@@ -5,10 +5,10 @@ Chores
 ------
 
 * [x] Standard readme
-* [ ] Setup ci
-* [ ] Setup up push commit hooks
+* [x] Setup ci
+* [x] Setup up push commit hooks
 * [ ] JS tests for react ui
-* [ ] Add storybook
+* [x] Add storybook
 * [ ] Switch out css
 
 Features
