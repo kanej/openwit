@@ -18,8 +18,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
+    "test:truffle": "truffle test",
     "eject": "react-scripts eject",
-    "dev:ganache": "ganache-cli -m \"ostrich high museum cheap fade about much voyage exist common deposit distance\""
+    "dev:ganache": "ganache-cli -m \"ostrich high museum cheap fade about much voyage exist common deposit distance\"",
+    "lint": "standard"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
