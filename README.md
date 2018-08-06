@@ -1,9 +1,34 @@
-OpenWit
-=======
+# openwit
+
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square)](https://standardjs.com)
+[![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 > Microblogging fun with Ethereum and IPFS
 
-Under development
+An attempt at a simple micro-blogging system running on Ethereum for change control and IPFS for storage.
+
+This has been developed as my project for the Consensys Academy 2018 project.
+
+## Table of Contents
+
+- [Security](#security)
+- [Background](#background)
+- [Install](#install)
+- [Usage](#usage)
+- [Maintainers](#maintainers)
+- [Contribute](#contribute)
+- [License](#license)
+
+## Security
+
+OpenWit is made up of one Ethereum contract currently. It has had no security measures put in place.
+
+## Install
+
+
+```bash
+npm install
+```
 
 Usage
 -----
@@ -33,3 +58,17 @@ $ node ./scripts/setupFeed.js
 ```
 
 Refresh the development server
+
+## Maintainers
+
+[@kanej](https://github.com/kanej)
+
+## Contribute
+
+PRs accepted.
+
+Small note: If editing the README, please conform to the [standard-readme](https://github.com/RichardLitt/standard-readme) specification.
+
+## License
+
+MIT © 2018 John Kane
