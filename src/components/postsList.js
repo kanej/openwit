@@ -16,7 +16,17 @@ const styles = {
 }
 
 function PostsList (props) {
-  var { classes } = props
+  var { classes, posts } = props
+
+  if (!posts || posts.length === 0) {
+    return (
+      <Card key={1}>
+        <CardContent className={classes.postCardContent}>
+          <p>No posts yet</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   var postCards = props.posts.map((post, index) => (
     <Card key={index}>

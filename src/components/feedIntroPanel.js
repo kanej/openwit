@@ -22,7 +22,13 @@ const styles = theme => ({
 })
 
 function AutoGrid (props) {
-  const { classes } = props
+  const { classes, feed } = props
+
+  if (!feed) {
+    return (
+      <div />
+    )
+  }
 
   return (
     <div className={classes.root}>
@@ -30,9 +36,9 @@ function AutoGrid (props) {
         <Grid item xs>
           <Grid container justify='flex-end'>
             <Grid item className={classes.leftCol}>
-              <Avatar person={props.feed.author} />
-              <h3>{props.feed.author.name}</h3>
-              <h4>{props.feed.title}</h4>
+              <Avatar person={feed.author} />
+              <h3>{feed.author.name}</h3>
+              <h4>{feed.title}</h4>
               <Button variant='contained' color='primary'>
                     Follow
               </Button>
@@ -41,7 +47,7 @@ function AutoGrid (props) {
 
         </Grid>
         <Grid item xs={6}>
-          <PostsList posts={props.feed.posts} />
+          <PostsList posts={feed.posts} />
         </Grid>
         <Grid item xs />
       </Grid>
@@ -51,7 +57,7 @@ function AutoGrid (props) {
 
 AutoGrid.propTypes = {
   classes: PropTypes.object.isRequired,
-  feed: PropTypes.object.isRequired
+  feed: PropTypes.object
 }
 
 export default withStyles(styles)(AutoGrid)

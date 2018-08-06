@@ -10,6 +10,7 @@ Chores
 * [ ] JS tests for react ui
 * [x] Add storybook
 * [ ] Switch out css
+* [ ] Linting for solidity
 
 Features
 --------

@@ -6,7 +6,7 @@ import getIpfs from 'window.ipfs-fallback'
 
 import OpenWitViewer from './openWitViewer'
 
-const mode = 'from-anchor-tag' // 'widget' 'hardcoded'
+const mode = 'viewer' // 'widget' 'hardcoded'
 
 const setup = async () => {
   try {

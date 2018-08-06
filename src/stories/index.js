@@ -1,11 +1,13 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
+import { action } from '@storybook/addon-actions'
 
 import App from '../App'
 import Avatar from '../components/avatar'
 import Appbar from '../components/appbar'
 import FeedIntroPanel from '../components/feedIntroPanel'
 import PostsList from '../components/postsList'
+import ContractAddressInputs from '../components/contractAddressInput'
 
 const author = {
   name: 'Frost'
@@ -23,7 +25,8 @@ const exampleFeed = {
 }
 
 storiesOf('Open Wit', module)
-  .add('Example feed loaded from hashtag', () => <App feed={exampleFeed} />)
+  .add('Example feed loaded from hashtag', () => <App mode='from-anchor-tag' feed={exampleFeed} />)
+  .add('Contract Viewer Mode', () => <App mode='viewer' />)
 
 storiesOf('Appbar', module)
   .add('fully enabled', () => <Appbar title='Openwit' />)
@@ -36,3 +39,6 @@ storiesOf('Posts List', module)
 
 storiesOf('Avatar', module)
   .add('without specific image', () => <Avatar person={author} />)
+
+storiesOf('Contract Address Input', module)
+  .add('on first load', () => <ContractAddressInputs onChange={action('another')} />)
