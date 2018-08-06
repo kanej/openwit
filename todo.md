@@ -11,6 +11,8 @@ Chores
 * [x] Add storybook
 * [ ] Switch out css
 * [ ] Linting for solidity
+* [ ] Publish on ipfs
+* [ ] Deal with publishing contracts to src folder
 
 Features
 --------

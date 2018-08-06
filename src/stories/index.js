@@ -9,6 +9,10 @@ import FeedIntroPanel from '../components/feedIntroPanel'
 import PostsList from '../components/postsList'
 import ContractAddressInputs from '../components/contractAddressInput'
 
+const owner = '0xeed080e939b6d6cb306a5de44e03bab14cf2ac9f'
+
+const accounts = [owner]
+
 const author = {
   name: 'Frost'
 }
@@ -25,14 +29,26 @@ const exampleFeed = {
 }
 
 storiesOf('Open Wit', module)
-  .add('Example feed loaded from hashtag', () => <App mode='from-anchor-tag' feed={exampleFeed} />)
-  .add('Contract Viewer Mode', () => <App mode='viewer' />)
+  .add('Example feed loaded from hashtag', () =>
+    <App
+      mode='from-anchor-tag'
+      owner={owner}
+      accounts={accounts}
+      feed={exampleFeed} />)
+  .add('Contract Viewer Mode', () =>
+    <App
+      mode='viewer'
+      owner={owner}
+      accounts={accounts} />)
 
 storiesOf('Appbar', module)
   .add('fully enabled', () => <Appbar title='Openwit' />)
 
 storiesOf('Feed Intro Panel', module)
-  .add('standard', () => <FeedIntroPanel feed={exampleFeed} />)
+  .add('standard', () =>
+    <FeedIntroPanel
+      accounts={accounts}
+      feed={exampleFeed} />)
 
 storiesOf('Posts List', module)
   .add('standard', () => <PostsList posts={exampleFeed.posts} />)
