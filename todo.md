@@ -4,7 +4,7 @@ TODO
 Chores
 ------
 
-* [ ] Standard readme
+* [x] Standard readme
 * [ ] Setup ci
 * [ ] Setup up push commit hooks
 * [ ] JS tests for react ui

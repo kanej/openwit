@@ -19,6 +19,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "test:truffle": "truffle test",
+    "test:ci": "./node_modules/.bin/run-with-testrpc 'truffle test'",
     "eject": "react-scripts eject",
     "dev:ganache": "ganache-cli -m \"ostrich high museum cheap fade about much voyage exist common deposit distance\"",
     "lint": "standard"
@@ -26,7 +27,10 @@
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
     "eth-crypto": "^1.2.3",
+    "ganache-cli": "^6.1.6",
+    "pre-commit": "^1.2.2",
     "react-scripts": "^1.1.4",
+    "run-with-testrpc": "^0.3.0",
     "standard": "^11.0.1"
   },
   "config": {
@@ -43,5 +47,9 @@
       "URL",
       "fetch"
     ]
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "test:truffle"
+  ]
 }
