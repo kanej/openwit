@@ -4,6 +4,7 @@ import Appbar from './components/appbar'
 import FeedIntroPanel from './components/feedIntroPanel'
 import './App.css'
 import ContractAddressInput from './components/contractAddressInput'
+import bind from 'lodash/bind'
 
 class App extends Component {
   constructor (props) {
@@ -18,9 +19,10 @@ class App extends Component {
       accounts: props.accounts,
       address: props.address || null,
       feed: props.feed || null,
-      owner: null,
+      owner: props.owner,
       contract: null,
-      getOpenWitFeed: props.getOpenWitFeed
+      getOpenWitFeed: props.getOpenWitFeed,
+      addPostToOpenWitFeed: props.addPostToOpenWitFeed
     }
   }
   render () {
@@ -32,7 +34,8 @@ class App extends Component {
           <FeedIntroPanel
             owner={this.state.owner}
             accounts={this.state.accounts}
-            feed={this.state.feed} />
+            feed={this.state.feed}
+            onPostAdded={bind(this.onPostAdded, this)} />
         </div>
       )
     } else if (this.state.mode === 'from-anchor-tag') {
@@ -42,7 +45,8 @@ class App extends Component {
           <FeedIntroPanel
             owner={this.state.owner}
             accounts={this.state.accounts}
-            feed={this.state.feed} />
+            feed={this.state.feed}
+            onPostAdded={bind(this.onPostAdded, this)} />
         </div>
       )
     } else {
@@ -60,8 +64,6 @@ class App extends Component {
     console.log('Loadings address ' + address + ' ...')
 
     this.state.getOpenWitFeed(address).then(({feed, contract, owner}) => {
-      console.log('owner', owner)
-
       this.setState({
         'contract': contract,
         'feed': feed,
@@ -71,6 +73,11 @@ class App extends Component {
     }).catch(err => {
       throw err
     })
+  }
+  async onPostAdded (postText) {
+    const {feed} = await this.state.addPostToOpenWitFeed(postText)
+
+    this.setState({feed})
   }
 }
 

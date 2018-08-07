@@ -10,9 +10,19 @@ class FeedReader {
     await this.wit.init()
   }
 
-  async getFeed (cid) {
-    const feed = await this.wit.loadFeed({ cid: 'zdpuAqqmRH5FkZmsuWbopTpaXVDQ7PQyNDCd4GwHX6r17W7eU' })
+  async loadFeedFromCid (cid) {
+    const feed = await this.wit.loadFeed({ cid: cid })
 
+    return this.convertToOpenWitFeed(feed)
+  }
+
+  async getFeed (feedName) {
+    const feed = await this.wit.getFeed(feedName)
+
+    return this.convertToOpenWitFeed(feed)
+  }
+
+  async convertToOpenWitFeed (feed) {
     var iterator = feed.feedAsyncIterator()
 
     var isDone = false

@@ -8,6 +8,7 @@ import Appbar from '../components/appbar'
 import FeedIntroPanel from '../components/feedIntroPanel'
 import PostsList from '../components/postsList'
 import ContractAddressInputs from '../components/contractAddressInput'
+import PostInputBox from '../components/postInputBox'
 
 const owner = '0xeed080e939b6d6cb306a5de44e03bab14cf2ac9f'
 
@@ -34,7 +35,8 @@ storiesOf('Open Wit', module)
       mode='from-anchor-tag'
       owner={owner}
       accounts={accounts}
-      feed={exampleFeed} />)
+      feed={exampleFeed}
+      onPostAdded={action('Add New Post')} />)
   .add('Contract Viewer Mode', () =>
     <App
       mode='viewer'
@@ -58,3 +60,6 @@ storiesOf('Avatar', module)
 
 storiesOf('Contract Address Input', module)
   .add('on first load', () => <ContractAddressInputs onChange={action('another')} />)
+
+storiesOf('Post input box', module)
+  .add('default', () => <PostInputBox onTextEnter={action('text entered')} />)

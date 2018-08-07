@@ -6,7 +6,7 @@ import getIpfs from 'window.ipfs-fallback'
 
 import OpenWitViewer from './openWitViewer'
 
-const mode = 'viewer' // 'widget' 'hardcoded'
+const mode = 'from-anchor-tag' // 'widget' 'hardcoded'
 
 const setup = async () => {
   try {
@@ -23,6 +23,8 @@ const setup = async () => {
       ipfs: ipfs,
       web3: web3
     })
+
+    window.viewer = viewer
 
     viewer.init()
   } catch (err) {

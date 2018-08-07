@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
 import Avatar from './avatar'
 import PostsList from './postsList'
+import PostInputBox from './postInputBox'
 
 const styles = theme => ({
   root: {
@@ -30,6 +31,8 @@ function FeedIntroPanel (props) {
     )
   }
 
+  const isCurrentUserOwnerOfFeed = owner === accounts[0].toLowerCase()
+
   return (
     <div className={classes.root}>
       <Grid container spacing={24}>
@@ -40,7 +43,7 @@ function FeedIntroPanel (props) {
               <h3>{feed.author.name}</h3>
               <h4>{feed.title}</h4>
               {(() => {
-                if (owner === accounts[0].toLowerCase()) {
+                if (isCurrentUserOwnerOfFeed) {
                   return (<div />)
                 } else {
                   return (
@@ -56,6 +59,11 @@ function FeedIntroPanel (props) {
 
         </Grid>
         <Grid item xs={6}>
+          {(() => {
+            if (isCurrentUserOwnerOfFeed) {
+              return (<PostInputBox onTextEnter={props.onPostAdded} />)
+            }
+          })()}
           <PostsList posts={feed.posts} />
         </Grid>
         <Grid item xs />
@@ -66,6 +74,7 @@ function FeedIntroPanel (props) {
 
 FeedIntroPanel.propTypes = {
   classes: PropTypes.object.isRequired,
+  onPostAdded: PropTypes.func.isRequired,
   feed: PropTypes.object,
   owner: PropTypes.string
 }
