@@ -18,6 +18,7 @@ export default class OpenWitViewer {
 
     this.openWit = null
     this.accounts = null
+    this.feedReader = null
   }
 
   async init () {
@@ -28,47 +29,48 @@ export default class OpenWitViewer {
 
     this.accounts = await this.web3.eth.getAccounts()
 
-    if (this.mode === 'from-anchor-tag') {
-      let contractAddress = window.location.hash.slice(1)
+    this.feedReader = await getFeedReader({ ipfs: this.ipfs })
 
-      const {feed, owner, contract} = await this.getOpenWitFeed(contractAddress)
-
-      ReactDOM.render(
-        <App
-          mode={this.mode}
-          feed={feed}
-          owner={owner}
-          contract={contract}
-          accounts={this.accounts}
-          getOpenWitFeed={bind(this.getOpenWitFeed, this)}
-          addPostToOpenWitFeed={bind(this.addPostToOpenWitFeed, this)} />,
-        document.getElementById(this.el))
-    } else if (this.mode === 'viewer') {
-      ReactDOM.render(
-        <App
-          mode={this.mode}
-          accounts={this.accounts}
-          getOpenWitFeed={bind(this.getOpenWitFeed, this)}
-          onPostAdded={bind(this.addPostToOpenWitFeed, this)} />,
-        document.getElementById(this.el))
-    } else {
-      throw Error('Only viewer and anchor tag mode supported currently')
-    }
+    ReactDOM.render(
+      <App
+        mode={this.mode}
+        getOpenWitFeed={bind(this.getOpenWitFeed, this)}
+        addPostToOpenWitFeed={bind(this.addPostToOpenWitFeed, this)}
+        feed={null}
+        owner={null}
+        contract={null}
+        accounts={this.accounts} />,
+      document.getElementById(this.el))
   }
 
-  async getOpenWitFeed (contractAddress) {
+  async getOpenWitFeed (contractAddress, callback) {
     try {
       const contract = await this.openWit.at(contractAddress)
-      const [version, codec, hash, size, digest] = await contract.getFeed()
-      const owner = await contract.owner.call()
-      const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
-      const feedReader = await getFeedReader({ ipfs: this.ipfs })
-      const feed = await feedReader.loadFeedFromCid(cid)
-      feed.author = { name: 'Cicero' }
 
-      this.feedReader = feedReader
+      const owner = await contract.owner.call()
+
+      const [version, codec, hash, size, digest] = await contract.getFeed()
+
+      const feed = await this._loadFeedFromCidParts({ version, codec, hash, size, digest })
+
       this.feed = feed
       this.contract = contract
+
+      contract.allEvents().watch(async (err, res) => {
+        if (err) {
+          throw err
+        }
+
+        if (res.event === 'FeedUpdate') {
+          const {version, codec, hashFunction, size, digest} = res.args
+
+          this.feed = await this._loadFeedFromCidParts({version, codec, hash: hashFunction, size, digest})
+          console.log(callback)
+          if (callback) {
+            callback(this.feed)
+          }
+        }
+      })
 
       return {feed, owner, contract}
     } catch (e) {
@@ -78,7 +80,6 @@ export default class OpenWitViewer {
 
   async addPostToOpenWitFeed (postText) {
     const feedName = this.feed.title
-
     const updatedCid = await this.feedReader.wit.post({ feed: feedName, text: postText })
 
     const { version, codec, hash, size, digest } = getBytesFromCidv1(updatedCid)
@@ -94,5 +95,13 @@ export default class OpenWitViewer {
     const updatedFeed = await this.feedReader.getFeed(feedName)
     updatedFeed.author = { name: 'Cicero' }
     return {feed: updatedFeed}
+  }
+
+  async _loadFeedFromCidParts ({ version, codec, hash, size, digest }) {
+    const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
+
+    const feed = await this.feedReader.loadFeedFromCid(cid)
+    feed.author = { name: 'Cicero' }
+    return feed
   }
 }

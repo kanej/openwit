@@ -18,7 +18,8 @@ Features
 --------
 
 * [ ] widget for reading contract / option for hardcode / option for from url
-* [ ] Monitor contract for changes
+* [ ] Fix metadata display per post and no more hardcoded authors
+* [x] Monitor contract for changes
 * [ ] command line add feed entry
 * [x] ui based add feed
 * [ ] transfer ownership

@@ -25,6 +25,24 @@ class App extends Component {
       addPostToOpenWitFeed: props.addPostToOpenWitFeed
     }
   }
+  async componentDidMount () {
+    if (this.state.mode === 'viewer') {
+      // ignore
+    } else if (this.state.mode === 'from-anchor-tag') {
+      let contractAddress = window.location.hash.slice(1)
+
+      const {feed, owner, contract} = await this.state.getOpenWitFeed(
+        contractAddress,
+        bind(this._updateFeed, this))
+
+      this.setState({feed, owner, contract})
+    } else {
+      throw Error('Unknown mode ' + this.state.mode)
+    }
+  }
+  componentWillUnmount () {
+
+  }
   render () {
     if (this.state.mode === 'viewer') {
       return (
@@ -63,7 +81,7 @@ class App extends Component {
 
     console.log('Loadings address ' + address + ' ...')
 
-    this.state.getOpenWitFeed(address).then(({feed, contract, owner}) => {
+    this.state.getOpenWitFeed(address, bind(this._updateFeed, this)).then(({feed, contract, owner}) => {
       this.setState({
         'contract': contract,
         'feed': feed,
@@ -77,6 +95,10 @@ class App extends Component {
   async onPostAdded (postText) {
     const {feed} = await this.state.addPostToOpenWitFeed(postText)
 
+    this.setState({feed})
+  }
+  _updateFeed (feed) {
+    console.log('Feed update!')
     this.setState({feed})
   }
 }

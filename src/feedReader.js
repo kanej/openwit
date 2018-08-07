@@ -12,7 +12,6 @@ class FeedReader {
 
   async loadFeedFromCid (cid) {
     const feed = await this.wit.loadFeed({ cid: cid })
-
     return this.convertToOpenWitFeed(feed)
   }
 
