@@ -15,6 +15,10 @@ const setup = async () => {
     const id = await ipfs.id() // Get the peer id info
     console.log(`Running ${id.agentVersion} with ID ${id.id}`)
 
+    if (id.id !== 'QmRJepitjCzY3eN22mXojCZTpZNrEGnPdjKxrpR9nxsDq2') {
+      await ipfs.swarm.connect('/ip4/127.0.0.1/tcp/9999/ws/ipfs/QmRJepitjCzY3eN22mXojCZTpZNrEGnPdjKxrpR9nxsDq2')
+    }
+
     let web3 = (await getWeb3).web3
 
     const viewer = new OpenWitViewer({

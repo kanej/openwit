@@ -31,7 +31,10 @@ function FeedIntroPanel (props) {
     )
   }
 
-  const isCurrentUserOwnerOfFeed = owner === accounts[0].toLowerCase()
+  const isCurrentUserOwnerOfFeed =
+    accounts !== undefined &&
+    accounts.length > 0 &&
+    owner === accounts[0].toLowerCase()
 
   return (
     <div className={classes.root}>
