@@ -34,7 +34,6 @@ contract OpenWit {
    * @param _size length of the digest
    * @param _digest hash digest produced by hashing content using hash function
    */
-  //function setFeed(bytes32 _digest, uint8 _hashFunction, uint8 _size)
   function setFeed(uint8 _version, uint8 _codec, uint8 _hash, uint8 _size, bytes32 _digest)
   public
   {

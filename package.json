@@ -2,6 +2,20 @@
   "name": "openwit",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+   "start": "react-scripts start",
+   "build": "react-scripts build",
+   "test": "react-scripts test --env=jsdom",
+   "test:truffle": "truffle test",
+   "test:ci": "./node_modules/.bin/run-with-testrpc 'truffle test'",
+   "eject": "react-scripts eject",
+   "dev:ganache": "ganache-cli -m \"ostrich high museum cheap fade about much voyage exist common deposit distance\"",
+   "lint:ci": "npm run lint:js & npm run lint:sol",
+   "lint:js": "standard",
+   "lint:sol": "node ./node_modules/solium/bin/solium.js -d ./contracts",
+   "storybook": "start-storybook -p 9009 -s public",
+   "build-storybook": "build-storybook -s public"
+ },
   "dependencies": {
     "@material-ui/core": "^1.2.1",
     "cids": "^0.5.3",
@@ -15,32 +29,21 @@
     "web3": "^1.0.0-beta.34",
     "window.ipfs-fallback": "^1.1.0"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "test:truffle": "truffle test",
-    "test:ci": "./node_modules/.bin/run-with-testrpc 'truffle test'",
-    "eject": "react-scripts eject",
-    "dev:ganache": "ganache-cli -m \"ostrich high museum cheap fade about much voyage exist common deposit distance\"",
-    "lint": "standard",
-    "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
-  },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.10",
+    "@storybook/addon-links": "^3.4.10",
+    "@storybook/addons": "^3.4.10",
+    "@storybook/react": "^3.4.10",
+    "babel-core": "^6.26.3",
+    "babel-runtime": "^6.26.0",
     "cz-conventional-changelog": "^2.1.0",
     "eth-crypto": "^1.2.3",
     "ganache-cli": "^6.1.6",
     "pre-commit": "^1.2.2",
     "react-scripts": "^1.1.4",
     "run-with-testrpc": "^0.3.0",
-    "standard": "^11.0.1",
-    "@storybook/react": "^3.4.10",
-    "@storybook/addon-actions": "^3.4.10",
-    "@storybook/addon-links": "^3.4.10",
-    "@storybook/addons": "^3.4.10",
-    "babel-core": "^6.26.3",
-    "babel-runtime": "^6.26.0"
+    "solium": "^1.1.8",
+    "standard": "^11.0.1"
   },
   "config": {
     "commitizen": {
@@ -58,7 +61,7 @@
     ]
   },
   "pre-commit": [
-    "lint",
+    "lint:js",
     "test:truffle"
   ]
 }
