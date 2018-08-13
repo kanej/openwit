@@ -33,13 +33,10 @@ export default class OpenWitViewer {
 
     ReactDOM.render(
       <App
-        mode={this.mode}
+        accounts={this.accounts}
         getOpenWitFeed={bind(this.getOpenWitFeed, this)}
         addPostToOpenWitFeed={bind(this.addPostToOpenWitFeed, this)}
-        feed={null}
-        owner={null}
-        contract={null}
-        accounts={this.accounts} />,
+        transferOwnership={bind(this.transferOwnership, this)} />,
       document.getElementById(this.el))
   }
 
@@ -65,7 +62,7 @@ export default class OpenWitViewer {
           const {version, codec, hashFunction, size, digest} = res.args
 
           this.feed = await this._loadFeedFromCidParts({version, codec, hash: hashFunction, size, digest})
-          console.log(callback)
+
           if (callback) {
             callback(this.feed)
           }
@@ -95,6 +92,10 @@ export default class OpenWitViewer {
     const updatedFeed = await this.feedReader.getFeed(feedName)
     updatedFeed.author = { name: 'Cicero' }
     return {feed: updatedFeed}
+  }
+
+  async transferOwnership (contractAddress) {
+    await this.contract.transferOwnership(contractAddress, { from: this.accounts[0] })
   }
 
   async _loadFeedFromCidParts ({ version, codec, hash, size, digest }) {

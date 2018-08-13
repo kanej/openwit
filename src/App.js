@@ -1,112 +1,69 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Appbar from './components/appbar'
-import FeedIntroPanel from './components/feedIntroPanel'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+
+import FeedPage from './components/feedPage'
+import HomePage from './components/homePage'
+
 import './App.css'
-import ContractAddressInput from './components/contractAddressInput'
-import bind from 'lodash/bind'
 
 class App extends Component {
   constructor (props) {
     super(props)
 
-    if (!['viewer', 'from-anchor-tag'].includes(props.mode)) {
-      throw Error("Argument error: App requires a mode of either 'viewer' or 'from-anchor-tag'")
-    }
-
     this.state = {
-      mode: props.mode,
       accounts: props.accounts,
-      address: props.address || null,
-      feed: props.feed || null,
-      owner: props.owner,
-      contract: null,
       getOpenWitFeed: props.getOpenWitFeed,
-      addPostToOpenWitFeed: props.addPostToOpenWitFeed
+      addPostToOpenWitFeed: props.addPostToOpenWitFeed,
+      transferOwnership: props.transferOwnership,
+      feed: null,
+      owner: null,
+      contract: null
     }
   }
-  async componentDidMount () {
-    if (this.state.mode === 'viewer') {
-      // ignore
-    } else if (this.state.mode === 'from-anchor-tag') {
-      let contractAddress = window.location.hash.slice(1)
 
-      const {feed, owner, contract} = await this.state.getOpenWitFeed(
-        contractAddress,
-        bind(this._updateFeed, this))
-
-      this.setState({feed, owner, contract})
-    } else {
-      throw Error('Unknown mode ' + this.state.mode)
-    }
-  }
-  componentWillUnmount () {
-
-  }
   render () {
-    if (this.state.mode === 'viewer') {
-      return (
-        <div className='App'>
-          <Appbar title='Openwit' />
-          <ContractAddressInput onChange={(e) => this.contractAddressUpdate(e)} />
-          <FeedIntroPanel
-            owner={this.state.owner}
-            accounts={this.state.accounts}
-            feed={this.state.feed}
-            onPostAdded={bind(this.onPostAdded, this)} />
+    const {
+      accounts,
+      getOpenWitFeed,
+      addPostToOpenWitFeed,
+      transferOwnership } = this.state
+
+    console.log('rendering app')
+
+    return (
+      <Router>
+        <div>
+          <Switch>
+            <Route exact path='/' render={(routeProps) =>
+              <HomePage
+                {...routeProps} />
+            } />
+            <Route path='/feed/:contractAddress' render={(routeProps) =>
+              <FeedPage
+                {...routeProps}
+                accounts={accounts}
+                getOpenWitFeed={getOpenWitFeed}
+                addPostToOpenWitFeed={addPostToOpenWitFeed}
+                onOwnershipTransfer={transferOwnership} />
+            } />
+            <Route>
+              <div>
+                <h1>Not Found</h1>
+                <p>It seems the distributed web has got a little too distributed ... it is not here</p>
+              </div>
+            </Route>
+          </Switch>
         </div>
-      )
-    } else if (this.state.mode === 'from-anchor-tag') {
-      return (
-        <div className='App'>
-          <Appbar title='Openwit' />
-          <FeedIntroPanel
-            owner={this.state.owner}
-            accounts={this.state.accounts}
-            feed={this.state.feed}
-            onPostAdded={bind(this.onPostAdded, this)} />
-        </div>
-      )
-    } else {
-      throw Error('Unknown mode ' + this.state.mode)
-    }
-  }
-  contractAddressUpdate (e) {
-    const address = e.target.value
-
-    if (!address || address.length !== 42 || !/^0x/g.test(address)) {
-      console.log('Invalid address: ' + address)
-      return
-    }
-
-    console.log('Loadings address ' + address + ' ...')
-
-    this.state.getOpenWitFeed(address, bind(this._updateFeed, this)).then(({feed, contract, owner}) => {
-      this.setState({
-        'contract': contract,
-        'feed': feed,
-        'owner': owner,
-        'address': address
-      })
-    }).catch(err => {
-      throw err
-    })
-  }
-  async onPostAdded (postText) {
-    const {feed} = await this.state.addPostToOpenWitFeed(postText)
-
-    this.setState({feed})
-  }
-  _updateFeed (feed) {
-    console.log('Feed update!')
-    this.setState({feed})
+      </Router>
+    )
   }
 }
 
 App.propTypes = {
-  mode: PropTypes.string.isRequired,
   accounts: PropTypes.array.isRequired,
-  feed: PropTypes.object
+  getOpenWitFeed: PropTypes.func.isRequired,
+  addPostToOpenWitFeed: PropTypes.func.isRequired
 }
 
 export default App

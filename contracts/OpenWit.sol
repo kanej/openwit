@@ -1,6 +1,8 @@
 pragma solidity ^0.4.18;
 
-contract OpenWit {
+import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
+
+contract OpenWit is Ownable {
   
   struct Cid {
     uint8 version;
@@ -19,7 +21,6 @@ contract OpenWit {
     bytes32 digest
   );
 
-  address public owner;
   Cid feed;
 
   constructor() public {
@@ -36,6 +37,7 @@ contract OpenWit {
    */
   function setFeed(uint8 _version, uint8 _codec, uint8 _hash, uint8 _size, bytes32 _digest)
   public
+  onlyOwner
   {
     feed = Cid(_version, _codec, _hash, _size, _digest);
     emit FeedUpdate(

@@ -14,16 +14,20 @@
     "lint:js": "standard",
     "lint:sol": "node ./node_modules/solium/bin/solium.js -d ./contracts",
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "truffle:migrate": "truffle migrate"
   },
   "dependencies": {
     "@material-ui/core": "^1.2.1",
+    "@material-ui/icons": "^2.0.1",
     "cids": "^0.5.3",
     "lodash": "^4.17.10",
     "multihash": "^0.1.0",
+    "openzeppelin-solidity": "1.11.0",
     "permawit": "0.0.4-development",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
     "truffle": "^4.1.13",
     "truffle-contract": "^3.0.6",
     "web3": "^1.0.0-beta.34",

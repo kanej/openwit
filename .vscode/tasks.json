@@ -11,6 +11,19 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "npm",
+            "script": "test:truffle",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "npm",
+            "script": "truffle:migrate",
+            "problemMatcher": []
         }
     ]
 }

@@ -25,14 +25,14 @@ const styles = theme => ({
 
 let ContractAddressInput = function (props) {
   return (
-    <Paper className={props.classes.root} elevation={2}>
-      <Typography>OpenWit Contract Viewer</Typography>
+    <Paper className={props.classes.root} elevation={5}>
+      <Typography>Enter the contract address of an OpenWit Contract</Typography>
       <form className={props.classes.container} autoComplete='off'>
         <div className={props.classes.margin}>
           <TextField
             fullWidth
             id='openwit-contract-address-input'
-            placeholder='OpenWit Contract address'
+            placeholder='e.g. 0xeed080e939b6d6cb306a5de44e03bab14cf2ac9f'
             onChange={props.onChange} />
         </div>
       </form>

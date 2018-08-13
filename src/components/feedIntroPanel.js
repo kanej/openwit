@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
 import Avatar from './avatar'
 import PostsList from './postsList'
 import PostInputBox from './postInputBox'
@@ -23,18 +22,18 @@ const styles = theme => ({
 })
 
 function FeedIntroPanel (props) {
-  const { classes, feed, owner, accounts } = props
+  const {
+    classes,
+    feed,
+    isOwner,
+    onSettingsClicked,
+    onOpenWitHomeClicked } = props
 
   if (!feed) {
     return (
       <div />
     )
   }
-
-  const isCurrentUserOwnerOfFeed =
-    accounts !== undefined &&
-    accounts.length > 0 &&
-    owner === accounts[0].toLowerCase()
 
   return (
     <div className={classes.root}>
@@ -45,26 +44,20 @@ function FeedIntroPanel (props) {
               <Avatar person={feed.author} />
               <h3>{feed.author.name}</h3>
               <h4>{feed.title}</h4>
-              {(() => {
-                if (isCurrentUserOwnerOfFeed) {
-                  return (<div />)
-                } else {
-                  return (
-                    <Button variant='contained' color='primary'>
-                    Follow
-                    </Button>
-                  )
-                }
-              })()}
-
+              <a href='#home' onClick={onOpenWitHomeClicked}>OpenWit</a>
             </Grid>
           </Grid>
 
         </Grid>
         <Grid item xs={6}>
           {(() => {
-            if (isCurrentUserOwnerOfFeed) {
-              return (<PostInputBox onTextEnter={props.onPostAdded} />)
+            if (isOwner) {
+              return (
+                <PostInputBox
+                  isOwner={isOwner}
+                  onTextEnter={props.onPostAdded}
+                  onSettingsClicked={onSettingsClicked} />
+              )
             }
           })()}
           <PostsList posts={feed.posts} />
@@ -78,8 +71,10 @@ function FeedIntroPanel (props) {
 FeedIntroPanel.propTypes = {
   classes: PropTypes.object.isRequired,
   onPostAdded: PropTypes.func.isRequired,
-  feed: PropTypes.object,
-  owner: PropTypes.string
+  onSettingsClicked: PropTypes.func.isRequired,
+  onOpenWitHomeClicked: PropTypes.func.isRequired,
+  isOwner: PropTypes.bool.isRequired,
+  feed: PropTypes.object
 }
 
 export default withStyles(styles)(FeedIntroPanel)
