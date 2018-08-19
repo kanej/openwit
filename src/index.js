@@ -1,36 +1,24 @@
 import './index.css'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 // import registerServiceWorker from './registerServiceWorker'
-import getWeb3 from './getWeb3'
-import getIpfs from 'window.ipfs-fallback'
 
-import OpenWitViewer from './openWitViewer'
+import store from './store'
 
-const setup = async () => {
-  try {
-    // registerServiceWorker()
-    let ipfs = await getIpfs() // Init an IPFS peer node
-    const id = await ipfs.id() // Get the peer id info
-    console.log(`Running ${id.agentVersion} with ID ${id.id}`)
+import { initializeApp } from './actions'
+import { Provider } from 'react-redux'
+import AppContainer from './components/appContainer'
 
-    if (id.id !== 'QmRJepitjCzY3eN22mXojCZTpZNrEGnPdjKxrpR9nxsDq2') {
-      await ipfs.swarm.connect('/ip4/127.0.0.1/tcp/9999/ws/ipfs/QmRJepitjCzY3eN22mXojCZTpZNrEGnPdjKxrpR9nxsDq2')
-    }
+ReactDOM.render(
+  <Provider store={store}>
+    <AppContainer />
+  </Provider>,
+  document.getElementById('root'))
 
-    let web3 = (await getWeb3).web3
+// setup()
 
-    const viewer = new OpenWitViewer({
-      el: 'root',
-      ipfs: ipfs,
-      web3: web3
-    })
-
-    window.viewer = viewer
-
-    viewer.init()
-  } catch (err) {
-    console.log(err) // Just pass along the error
-  }
-}
-
-setup()
+store.dispatch(initializeApp())
+  .then(() => {
+    console.info('OpenWit App Initialized')
+  })

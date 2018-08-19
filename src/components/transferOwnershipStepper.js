@@ -93,9 +93,9 @@ class TransferOwnershipStepper extends Component {
       return (
         <div>
           <Typography>Enter the ethereum account to set as the new owner</Typography>
-          <form fullwidth noValidate autoComplete='off'>
+          <form noValidate autoComplete='off'>
             <TextField
-              fullwidth
+              fullWidth
               id='transfer-ownership-new-owner-input'
               label='Contract Address'
               className={classes.textField}
@@ -143,8 +143,8 @@ class TransferOwnershipStepper extends Component {
     })
   }
 
-  _handleConfirm () {
-    this.props.onOwnershipTransfer(this.state.newOwnerContractAddress)
+  async _handleConfirm (e) {
+    await this.props.onOwnershipTransfer(this.state.newOwnerContractAddress)
   }
 }
 

@@ -1,0 +1,300 @@
+import contract from 'truffle-contract'
+import getWeb3 from './getWeb3'
+import getIpfs from 'window.ipfs-fallback'
+import getFeedReader from './feedReader'
+
+import OpenWitContract from './contracts/OpenWit.json'
+import { fixTruffleContractCompatibilityIssue } from './utils/fixes'
+import OpenWitViewer from './openWitViewer'
+
+export const LOAD_APP = 'LOAD_APP'
+export const FETCH_FEED = 'FETCH_FEED'
+export const POST_TO_FEED = 'POST_TO_FEED'
+export const TRANSFER_OWNERSHIP = 'TRANSFER_OWNERSHIP'
+export const FEED_UPDATED = 'FEED_UPDATED'
+
+export const loadingAppStates = {
+  INITIALIZING: 'INITIALIZING',
+  IPFS_LOADING: 'IPFS_LOADING',
+  IPFS_LOAD_FAILED: 'IPFS_LOAD_FAILED',
+  WEB3_LOADING: 'WEB3_LOADING',
+  WEB3_LOAD_FAILED: 'WEB3_LOAD_FAILED',
+  LOADED: 'LOADED'
+}
+
+export function loadAppInitializing () {
+  return {
+    type: LOAD_APP,
+    status: loadingAppStates.INITIALIZING
+  }
+}
+
+export function loadAppIpfsLoading () {
+  return {
+    type: LOAD_APP,
+    status: loadingAppStates.IPFS_LOADING
+  }
+}
+
+export function loadAppIpfsLoadingFailed (errorMessage) {
+  return {
+    type: LOAD_APP,
+    status: loadingAppStates.IPFS_LOAD_FAILED,
+    errorMessage
+  }
+}
+
+export function loadAppWeb3Loading ({ipfs, ipfsId}) {
+  return {
+    type: LOAD_APP,
+    status: loadingAppStates.WEB3_LOADING,
+    ipfs,
+    ipfsId
+  }
+}
+
+export function loadAppWeb3LoadingFailed (errorMessage) {
+  return {
+    type: LOAD_APP,
+    status: loadingAppStates.WEB3_LOAD_FAILED,
+    errorMessage
+  }
+}
+
+export function loadAppLoaded ({web3, currentWeb3Account, openWit, feedReader}) {
+  return {
+    type: LOAD_APP,
+    status: loadingAppStates.LOADED,
+    web3,
+    currentWeb3Account,
+    openWit,
+    feedReader
+  }
+}
+
+export function initializeApp () {
+  return async (dispatch) => {
+    dispatch(loadAppInitializing())
+
+    dispatch(loadAppIpfsLoading())
+    let ipfs, ipfsId
+    try {
+      ipfs = await getIpfs() // Init an IPFS peer node
+      ipfsId = await ipfs.id() // Get the peer id info
+      console.log(`Running ${ipfsId.agentVersion} with ID ${ipfsId.id}`)
+    } catch (e) {
+      return dispatch(loadAppIpfsLoadingFailed(e.message))
+    }
+    dispatch(loadAppWeb3Loading({ipfs, ipfsId}))
+    let web3, currentWeb3Account, openWit, feedReader
+    try {
+      web3 = (await getWeb3).web3
+      const accounts = await web3.eth.getAccounts()
+      currentWeb3Account = accounts[0]
+
+      openWit = contract(OpenWitContract)
+      openWit.setProvider(web3.currentProvider)
+      fixTruffleContractCompatibilityIssue(openWit)
+
+      feedReader = await getFeedReader({ ipfs: ipfs })
+    } catch (e) {
+      return dispatch(loadAppWeb3LoadingFailed(e.message))
+    }
+    return dispatch(loadAppLoaded({web3, currentWeb3Account, openWit, feedReader}))
+  }
+}
+
+export const fetchFeedStatuses = {
+  UNLOADED: 'UNLOADED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+export function fetchFeedRequested (feedAddress) {
+  return {
+    type: FETCH_FEED,
+    status: fetchFeedStatuses.REQUESTED,
+    feedAddress
+  }
+}
+
+export function fetchFeedFailed (errorMessage) {
+  return {
+    type: FETCH_FEED,
+    status: fetchFeedStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+export function fetchFeedSucceeded (feed, owner, contract, contractWatchCanceller) {
+  return {
+    type: FETCH_FEED,
+    status: fetchFeedStatuses.REQUEST_SUCCEEDED,
+    feed,
+    owner,
+    contract,
+    contractWatchCanceller
+  }
+}
+
+export function feedUpdated (ipfsFeed) {
+  return {
+    type: FEED_UPDATED,
+    ipfsFeed
+  }
+}
+
+export function fetchFeed (contractAddress) {
+  return async (dispatch, getState) => {
+    const { feed, openWit, feedReader } = getState()
+    if (feed.requestStatus === fetchFeedStatuses.REQUESTED) {
+      console.info('Request already in play')
+      return
+    }
+
+    dispatch(fetchFeedRequested(contractAddress))
+
+    try {
+      console.log('Fetch Feed at Eth Contract Address', contractAddress)
+
+      const feedUpdatedCallback = (ipfsFeed) => {
+        dispatch(feedUpdated(ipfsFeed))
+      }
+
+      const result = await OpenWitViewer.getOpenWitFeed(contractAddress, { openWit, feedReader, feedUpdatedCallback })
+
+      if (result.status === 'error') {
+        return dispatch(fetchFeedFailed(result.errorMessage))
+      }
+
+      const {feed, owner, contract, contractWatchCanceller} = result.content
+
+      return dispatch(fetchFeedSucceeded(feed, owner, contract, contractWatchCanceller))
+    } catch (ex) {
+      console.log(ex)
+      return dispatch(fetchFeedFailed(ex.message))
+    }
+  }
+}
+
+export const postToFeedStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function postToFeedRequested (postText) {
+  return {
+    type: POST_TO_FEED,
+    status: postToFeedStatuses.REQUESTED,
+    postText
+  }
+}
+
+function postToFeedFailed (errorMessage) {
+  return {
+    type: POST_TO_FEED,
+    status: postToFeedStatuses.REQUEST_FAILED,
+    errorMessage }
+}
+
+function postToFeedSuceeded (ipfsFeed) {
+  return {
+    type: POST_TO_FEED,
+    status: postToFeedStatuses.REQUEST_SUCCEEDED,
+    ipfsFeed
+  }
+}
+
+export function postToFeed (postText) {
+  return async (dispatch, getState) => {
+    const { postToFeed, feed, openWit, feedReader, currentWeb3Account } = getState()
+
+    if (postToFeed.requestStatus === postToFeedStatuses.REQUESTED) {
+      console.info('Request already in play')
+      return
+    }
+
+    dispatch(postToFeedRequested(postText))
+
+    try {
+      const result = await OpenWitViewer.addPostToOpenWitFeed(postText, {
+        openWit,
+        feedReader,
+        currentWeb3Account,
+        permawitFeed: feed.feed,
+        contract: feed.contract
+      })
+
+      if (result.status === 'error') {
+        return dispatch(postToFeedFailed(result.errorMessage))
+      }
+
+      return dispatch(postToFeedSuceeded(result.content.feed))
+    } catch (ex) {
+      console.log(ex)
+      return dispatch(postToFeedFailed(ex.message))
+    }
+  }
+}
+
+export const transferOwnershipStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function transferOwnershipRequested (newOwnerAccountAddress) {
+  return {
+    type: TRANSFER_OWNERSHIP,
+    status: transferOwnershipStatuses.REQUESTED,
+    newOwnerAccountAddress
+  }
+}
+
+function transferOwnershipFailed (errorMessage) {
+  return {
+    type: TRANSFER_OWNERSHIP,
+    status: transferOwnershipStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+function transferOwnershipSucceeded (errorMessage) {
+  return {
+    type: TRANSFER_OWNERSHIP,
+    status: transferOwnershipStatuses.REQUEST_SUCCEEDED,
+    errorMessage
+  }
+}
+
+export function transferOwnership (newOwnerAccountAddress) {
+  return async (dispatch, getState) => {
+    const { currentWeb3Account, feed } = getState()
+    dispatch(transferOwnershipRequested(newOwnerAccountAddress))
+
+    try {
+      console.log('transferring ownership to new owner ' + newOwnerAccountAddress)
+      const result = OpenWitViewer.transferOwnership(newOwnerAccountAddress, {
+        currentWeb3Account,
+        contract: feed.contract
+      })
+
+      if (result.status === 'error') {
+        dispatch(transferOwnershipFailed(result.errorMessage))
+        return false
+      }
+
+      transferOwnershipSucceeded()
+    } catch (ex) {
+      console.log(ex)
+      dispatch(transferOwnershipFailed(ex.message))
+      return false
+    }
+
+    return true
+  }
+}

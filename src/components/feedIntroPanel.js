@@ -25,6 +25,7 @@ function FeedIntroPanel (props) {
   const {
     classes,
     feed,
+    postToFeed,
     isOwner,
     onSettingsClicked,
     onOpenWitHomeClicked } = props
@@ -54,6 +55,7 @@ function FeedIntroPanel (props) {
             if (isOwner) {
               return (
                 <PostInputBox
+                  {...postToFeed}
                   isOwner={isOwner}
                   onTextEnter={props.onPostAdded}
                   onSettingsClicked={onSettingsClicked} />
@@ -74,7 +76,8 @@ FeedIntroPanel.propTypes = {
   onSettingsClicked: PropTypes.func.isRequired,
   onOpenWitHomeClicked: PropTypes.func.isRequired,
   isOwner: PropTypes.bool.isRequired,
-  feed: PropTypes.object
+  feed: PropTypes.object,
+  postToFeed: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(FeedIntroPanel)

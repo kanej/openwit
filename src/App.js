@@ -29,8 +29,6 @@ class App extends Component {
       addPostToOpenWitFeed,
       transferOwnership } = this.state
 
-    console.log('rendering app')
-
     return (
       <Router>
         <div>

@@ -26,6 +26,12 @@ const styles = {
 }
 
 class SettingsPanel extends Component {
+  constructor (props) {
+    super(props)
+
+    this._onBackToFeedClicked = this._onBackToFeedClicked.bind(this)
+  }
+
   render () {
     const {classes} = this.props
 
@@ -58,7 +64,7 @@ class SettingsPanel extends Component {
               </FormGroup>
             </Paper>
 
-            <TransferOwnershipStepper onOwnershipTransfer={this.props.onOwnershipTransfer} />
+            <TransferOwnershipStepper feedName={this.props.feedName} onOwnershipTransfer={this.props.onOwnershipTransfer} backToFeed={this._onBackToFeedClicked} />
 
             <Paper className={classes.paper}>
               <Typography variant='headline' component='h3'>

@@ -1,59 +1,14 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import bind from 'lodash/bind'
-import contract from 'truffle-contract'
-
-import App from './App'
-import getFeedReader from './feedReader'
 import {getCidv1FromBytes, getBytesFromCidv1} from './multihash'
-import OpenWitContract from './contracts/OpenWit.json'
-import { fixTruffleContractCompatibilityIssue } from './utils/fixes'
 
 export default class OpenWitViewer {
-  constructor (options) {
-    this.el = options.el
-    this.mode = options.mode
-    this.ipfs = options.ipfs
-    this.web3 = options.web3
-
-    this.openWit = null
-    this.accounts = null
-    this.feedReader = null
-  }
-
-  async init () {
-    const openWit = contract(OpenWitContract)
-    openWit.setProvider(this.web3.currentProvider)
-    fixTruffleContractCompatibilityIssue(openWit)
-    this.openWit = openWit
-
-    this.accounts = await this.web3.eth.getAccounts()
-
-    this.feedReader = await getFeedReader({ ipfs: this.ipfs })
-
-    ReactDOM.render(
-      <App
-        accounts={this.accounts}
-        getOpenWitFeed={bind(this.getOpenWitFeed, this)}
-        addPostToOpenWitFeed={bind(this.addPostToOpenWitFeed, this)}
-        transferOwnership={bind(this.transferOwnership, this)} />,
-      document.getElementById(this.el))
-  }
-
-  async getOpenWitFeed (contractAddress, callback) {
+  static async getOpenWitFeed (contractAddress, {openWit, feedReader, feedUpdatedCallback}) {
     try {
-      const contract = await this.openWit.at(contractAddress)
-
+      const contract = await openWit.at(contractAddress)
       const owner = await contract.owner.call()
-
       const [version, codec, hash, size, digest] = await contract.getFeed()
+      const feed = await OpenWitViewer._loadFeedFromCidParts(feedReader, { version, codec, hash, size, digest })
 
-      const feed = await this._loadFeedFromCidParts({ version, codec, hash, size, digest })
-
-      this.feed = feed
-      this.contract = contract
-
-      contract.allEvents().watch(async (err, res) => {
+      const contractWatchCanceller = contract.allEvents().watch(async (err, res) => {
         if (err) {
           throw err
         }
@@ -61,47 +16,52 @@ export default class OpenWitViewer {
         if (res.event === 'FeedUpdate') {
           const {version, codec, hashFunction, size, digest} = res.args
 
-          this.feed = await this._loadFeedFromCidParts({version, codec, hash: hashFunction, size, digest})
+          const feed = await OpenWitViewer._loadFeedFromCidParts(feedReader, {version, codec, hash: hashFunction, size, digest})
 
-          if (callback) {
-            callback(this.feed)
+          if (feedUpdatedCallback) {
+            feedUpdatedCallback(feed)
           }
         }
       })
 
-      return {feed, owner, contract}
+      return {status: 'success', content: {feed, owner, contract, contractWatchCanceller}}
     } catch (e) {
-      console.log(e)
+      return {status: 'error', errorMessage: e.message}
     }
   }
 
-  async addPostToOpenWitFeed (postText) {
-    const feedName = this.feed.title
-    const updatedCid = await this.feedReader.wit.post({ feed: feedName, text: postText })
+  static async addPostToOpenWitFeed (postText, {openWit, feedReader, permawitFeed, contract, currentWeb3Account}) {
+    const feedName = permawitFeed.title
+
+    const updatedCid = await feedReader.wit.post({ feed: feedName, text: postText })
 
     const { version, codec, hash, size, digest } = getBytesFromCidv1(updatedCid)
 
-    await this.contract.setFeed(
+    await contract.setFeed(
       version,
       codec,
       hash,
       size,
       digest,
-      { from: this.accounts[0] })
+      { from: currentWeb3Account })
 
-    const updatedFeed = await this.feedReader.getFeed(feedName)
+    const updatedFeed = await feedReader.getFeed(feedName)
     updatedFeed.author = { name: 'Cicero' }
-    return {feed: updatedFeed}
+
+    return {status: 'success', content: {feed: updatedFeed}}
   }
 
-  async transferOwnership (contractAddress) {
-    await this.contract.transferOwnership(contractAddress, { from: this.accounts[0] })
+  static async transferOwnership (newOwnerAccountAddress, {contract, currentWeb3Account}) {
+    await contract.transferOwnership(newOwnerAccountAddress, { from: currentWeb3Account })
+
+    return {status: 'success'}
   }
 
-  async _loadFeedFromCidParts ({ version, codec, hash, size, digest }) {
+  static async _loadFeedFromCidParts (feedReader, { version, codec, hash, size, digest }) {
     const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
 
-    const feed = await this.feedReader.loadFeedFromCid(cid)
+    const feed = await feedReader.loadFeedFromCid(cid)
+
     feed.author = { name: 'Cicero' }
     return feed
   }
