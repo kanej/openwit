@@ -1,8 +1,9 @@
 pragma solidity ^0.4.18;
 
 import "openzeppelin-solidity/contracts/lifecycle/Destructible.sol";
+import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
-contract OpenWit is Destructible {
+contract OpenWit is Destructible, Pausable {
   
   struct Cid {
     uint8 version;
@@ -38,6 +39,7 @@ contract OpenWit is Destructible {
   function setFeed(uint8 _version, uint8 _codec, uint8 _hash, uint8 _size, bytes32 _digest)
   public
   onlyOwner
+  whenNotPaused
   {
     feed = Cid(_version, _codec, _hash, _size, _digest);
     emit FeedUpdate(
@@ -60,5 +62,28 @@ contract OpenWit is Destructible {
   {
     Cid storage entry = feed;
     return (entry.version, entry.codec, entry.hashFunction, entry.size, entry.digest);
+  }
+
+  /**
+   * @dev Allows the current owner to relinquish control of the contract.
+   */
+  function renounceOwnership()
+  public
+  onlyOwner
+  whenNotPaused
+  {
+    super.renounceOwnership();
+  }
+
+  /**
+   * @dev Allows the current owner to transfer control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
+  function transferOwnership(address _newOwner)
+  public
+  onlyOwner
+  whenNotPaused
+  {
+    super.transferOwnership(_newOwner);
   }
 }

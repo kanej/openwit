@@ -4,11 +4,13 @@ import {
   FETCH_FEED,
   POST_TO_FEED,
   FEED_UPDATED,
+  TRANSFER_OWNERSHIP,
+  TOGGLE_LOCK,
   loadingAppStates,
   fetchFeedStatuses,
   postToFeedStatuses,
   transferOwnershipStatuses,
-  TRANSFER_OWNERSHIP
+  toggleLockStatuses
 } from './actions'
 
 const openWitApp = (state, action) => {
@@ -24,7 +26,8 @@ const openWitApp = (state, action) => {
       feed: {
         requestStatus: fetchFeedStatuses.UNLOADED,
         feedAddress: null,
-        errorMessage: null
+        errorMessage: null,
+        paused: false
       },
       postToFeed: {
         requestStatus: postToFeedStatuses.UNINITIATED,
@@ -96,8 +99,8 @@ const openWitApp = (state, action) => {
               requestStatus: action.status,
               feed: action.feed,
               owner: action.owner,
-              contract: action.contract,
-              contractWatchCanceller: action.contractWatchCanceller
+              paused: action.paused,
+              contract: action.contract
             }
           }
         case fetchFeedStatuses.UNLOADED:
@@ -173,6 +176,41 @@ const openWitApp = (state, action) => {
             feed: {
               ...state.feed,
               owner: state.transferOwnership.newOwnerAccountAddress
+            }
+          }
+        default:
+          return {...state}
+      }
+    case TOGGLE_LOCK:
+      switch (action.status) {
+        case toggleLockStatuses.REQUESTED:
+          return {
+            ...state,
+            toggleLock: {
+              requestStatus: action.status,
+              lockFlag: action.lockFlag,
+              errorMessage: null
+            }
+          }
+        case toggleLockStatuses.REQUEST_FAILED:
+          return {
+            ...state,
+            toggleLock: {
+              ...state.toggleLock,
+              requestStatus: action.status,
+              errorMessage: action.errorMessage
+            }
+          }
+        case toggleLockStatuses.REQUEST_SUCCEEDED:
+          return {
+            ...state,
+            toggleLock: {
+              ...state.toggleLock,
+              requestStatus: action.status
+            },
+            feed: {
+              ...state.feed,
+              paused: action.lockFlag
             }
           }
         default:

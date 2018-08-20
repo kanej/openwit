@@ -50,7 +50,9 @@ class SettingsPage extends Component {
         <SettingsPanel
           {...this.props}
           feedName={this.props.feed ? this.props.feed.title : null}
+          paused={this.props.paused}
           contractAddress={this.props.feedAddress}
+          onLockToggled={this.props.onLockToggled}
           onOwnershipTransfer={this.props.onOwnershipTransfer}
           onDestroy={this.props.onDestroy} />
       </div>
@@ -62,6 +64,7 @@ SettingsPage.propTypes = {
   requestStatus: PropTypes.string.isRequired,
   feedName: PropTypes.string,
   feedAddress: PropTypes.string,
+  onLockToggled: PropTypes.func.isRequired,
   onOwnershipTransfer: PropTypes.func.isRequired,
   onDestroy: PropTypes.func.isRequired
 }

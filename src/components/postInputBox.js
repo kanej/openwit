@@ -53,11 +53,11 @@ class PostInputBox extends React.Component {
   }
 
   render () {
-    var { classes, isOwner, onSettingsClicked, requestStatus } = this.props
+    var { classes, isOwner, paused, onSettingsClicked, requestStatus } = this.props
 
     var loading = requestStatus === postToFeedStatuses.REQUESTED
-    var inputDisabled = loading
-    var buttonDisabled = loading || !this.state.value || this.state.value.length < 3 || this.state.value.length > 160
+    var inputDisabled = loading || paused
+    var buttonDisabled = loading || paused || !this.state.value || this.state.value.length < 3 || this.state.value.length > 160
 
     return (
       <div>

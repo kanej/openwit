@@ -5,10 +5,11 @@ export default class OpenWitViewer {
     try {
       const contract = await openWit.at(contractAddress)
       const owner = await contract.owner.call()
+      const paused = await contract.paused.call()
       const [version, codec, hash, size, digest] = await contract.getFeed()
       const feed = await OpenWitViewer._loadFeedFromCidParts(feedReader, { version, codec, hash, size, digest })
 
-      const contractWatchCanceller = contract.allEvents().watch(async (err, res) => {
+      contract.allEvents().watch(async (err, res) => {
         if (err) {
           throw err
         }
@@ -24,7 +25,7 @@ export default class OpenWitViewer {
         }
       })
 
-      return {status: 'success', content: {feed, owner, contract, contractWatchCanceller}}
+      return {status: 'success', content: {feed, owner, paused, contract}}
     } catch (e) {
       console.error(e)
       return {status: 'error', errorMessage: e.message}
@@ -77,8 +78,22 @@ export default class OpenWitViewer {
     }
   }
 
+  static async toggleLock (lockFlag, {contract, currentWeb3Account}) {
+    try {
+      if (lockFlag) {
+        await contract.pause({from: currentWeb3Account})
+      } else {
+        await contract.unpause({from: currentWeb3Account})
+      }
+
+      return {status: 'success'}
+    } catch (e) {
+      console.log(e)
+      return {status: 'error', errorMessage: e.message}
+    }
+  }
+
   static async _loadFeedFromCidParts (feedReader, { version, codec, hash, size, digest }) {
-    console.log({ version, codec, hash, size, digest })
     const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
 
     const feed = await feedReader.loadFeedFromCid(cid)

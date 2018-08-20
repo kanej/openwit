@@ -5,11 +5,24 @@ import Grid from '@material-ui/core/Grid'
 import Avatar from './avatar'
 import PostsList from './postsList'
 import PostInputBox from './postInputBox'
+import Paper from '@material-ui/core/Paper'
+import { Typography } from '@material-ui/core'
+import LockIcon from '@material-ui/icons/Lock'
 
 const styles = theme => ({
   root: {
     padding: theme.spacing.unit,
     flexGrow: 1
+  },
+  lockedWarning: {
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 5
+  },
+  lockIcon: {
+    paddingTop: 15,
+    marginRight: 5,
+    marginLeft: 5
   },
   paper: {
     padding: theme.spacing.unit * 2,
@@ -27,6 +40,7 @@ function FeedIntroPanel (props) {
     feed,
     postToFeed,
     isOwner,
+    paused,
     onSettingsClicked,
     onOpenWitHomeClicked } = props
 
@@ -57,8 +71,24 @@ function FeedIntroPanel (props) {
                 <PostInputBox
                   {...postToFeed}
                   isOwner={isOwner}
+                  paused={paused}
                   onTextEnter={props.onPostAdded}
                   onSettingsClicked={onSettingsClicked} />
+              )
+            }
+          })()}
+          {(() => {
+            if (paused) {
+              return (
+                <Paper className={classes.lockedWarning} elevation={3}>
+                  <div style={{height: '50px'}}>
+                    <LockIcon className={classes.lockIcon} style={{float: 'left'}} />
+                    <Typography variant='headline' style={{float: 'left', marginTop: 12, marginLeft: 5}}>
+                      This feed is currently locked, there will be no new posts for the time being
+                    </Typography>
+                  </div>
+
+                </Paper>
               )
             }
           })()}
@@ -76,6 +106,7 @@ FeedIntroPanel.propTypes = {
   onSettingsClicked: PropTypes.func.isRequired,
   onOpenWitHomeClicked: PropTypes.func.isRequired,
   isOwner: PropTypes.bool.isRequired,
+  paused: PropTypes.bool.isRequired,
   feed: PropTypes.object,
   postToFeed: PropTypes.object.isRequired
 }

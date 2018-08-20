@@ -13,6 +13,7 @@ export const POST_TO_FEED = 'POST_TO_FEED'
 export const TRANSFER_OWNERSHIP = 'TRANSFER_OWNERSHIP'
 export const FEED_UPDATED = 'FEED_UPDATED'
 export const DESTROY_FEED = 'DESTROY_FEED'
+export const TOGGLE_LOCK = 'TOGGLE_LOCK'
 
 export const loadingAppStates = {
   INITIALIZING: 'INITIALIZING',
@@ -128,14 +129,14 @@ export function fetchFeedFailed (errorMessage) {
   }
 }
 
-export function fetchFeedSucceeded (feed, owner, contract, contractWatchCanceller) {
+export function fetchFeedSucceeded (feed, owner, paused, contract) {
   return {
     type: FETCH_FEED,
     status: fetchFeedStatuses.REQUEST_SUCCEEDED,
     feed,
     owner,
-    contract,
-    contractWatchCanceller
+    paused,
+    contract
   }
 }
 
@@ -169,9 +170,9 @@ export function fetchFeed (contractAddress) {
         return dispatch(fetchFeedFailed(result.errorMessage))
       }
 
-      const {feed, owner, contract, contractWatchCanceller} = result.content
+      const {feed, owner, paused, contract} = result.content
 
-      return dispatch(fetchFeedSucceeded(feed, owner, contract, contractWatchCanceller))
+      return dispatch(fetchFeedSucceeded(feed, owner, paused, contract))
     } catch (ex) {
       console.log(ex)
       return dispatch(fetchFeedFailed(ex.message))
@@ -285,18 +286,14 @@ export function transferOwnership (newOwnerAccountAddress) {
       })
 
       if (result.status === 'error') {
-        dispatch(transferOwnershipFailed(result.errorMessage))
-        return false
+        return dispatch(transferOwnershipFailed(result.errorMessage))
       }
 
-      dispatch(transferOwnershipSucceeded())
+      return dispatch(transferOwnershipSucceeded())
     } catch (ex) {
       console.log(ex)
-      dispatch(transferOwnershipFailed(ex.message))
-      return false
+      return dispatch(transferOwnershipFailed(ex.message))
     }
-
-    return true
   }
 }
 
@@ -341,13 +338,64 @@ export function destroyFeed () {
       })
 
       if (result.status === 'error') {
-        dispatch(destroyFeedFailed(result.errorMessage))
+        return dispatch(destroyFeedFailed(result.errorMessage))
       }
 
-      dispatch(destroyFeedSucceeded())
+      return dispatch(destroyFeedSucceeded())
     } catch (ex) {
       console.log(ex)
-      dispatch(destroyFeedFailed(ex.errorMessage))
+      return dispatch(destroyFeedFailed(ex.errorMessage))
+    }
+  }
+}
+
+export const toggleLockStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function toggleLockRequested (lockFlag) {
+  return {
+    type: TOGGLE_LOCK,
+    status: toggleLockStatuses.REQUESTED,
+    lockFlag
+  }
+}
+
+function toggleLockFailed (errorMessage) {
+  return {
+    type: TOGGLE_LOCK,
+    status: toggleLockStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+function toggleLockSucceeded (lockFlag) {
+  return {
+    type: TOGGLE_LOCK,
+    status: toggleLockStatuses.REQUEST_SUCCEEDED,
+    lockFlag
+  }
+}
+
+export function toggleLock (lockFlag) {
+  return async (dispatch, getState) => {
+    const { currentWeb3Account, feed } = getState()
+
+    dispatch(toggleLockRequested())
+
+    try {
+      const result = await OpenWitViewer.toggleLock(lockFlag, { currentWeb3Account, contract: feed.contract })
+
+      if (result.status === 'error') {
+        return dispatch(destroyFeedFailed(result.errorMessage))
+      }
+
+      return dispatch(toggleLockSucceeded(lockFlag))
+    } catch (ex) {
+      return dispatch(toggleLockFailed(ex.message))
     }
   }
 }

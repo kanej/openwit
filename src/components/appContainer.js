@@ -10,7 +10,7 @@ import SettingsPage from './settingsPage'
 
 import '../App.css'
 
-import { loadingAppStates, fetchFeed, postToFeed, transferOwnership, destroyFeed } from '../actions'
+import { loadingAppStates, fetchFeed, postToFeed, toggleLock, transferOwnership, destroyFeed } from '../actions'
 import AppLoadingPanel from './appLoadingPanel'
 
 class AppLoadingProcess extends Component {
@@ -35,6 +35,7 @@ class AppLoadingProcess extends Component {
       isOwner,
       loadOpenWitFeed,
       addPostToOpenWitFeed,
+      toggleLock,
       transferOwnership,
       destroy } = this.props
 
@@ -50,6 +51,7 @@ class AppLoadingProcess extends Component {
                 {... routeProps}
                 {... feed}
                 isOwner={isOwner}
+                onLockToggled={toggleLock}
                 onOwnershipTransfer={transferOwnership}
                 loadOpenWitFeed={loadOpenWitFeed}
                 onDestroy={destroy} />
@@ -103,6 +105,9 @@ const mapDispatchToProps = dispatch => {
     },
     addPostToOpenWitFeed: postText => {
       dispatch(postToFeed(postText))
+    },
+    toggleLock: isLocked => {
+      dispatch(toggleLock(isLocked))
     },
     transferOwnership: accountAddress => {
       dispatch(transferOwnership(accountAddress))

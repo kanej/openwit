@@ -43,6 +43,7 @@ class FeedPage extends Component {
           postToFeed={this.props.postToFeed}
           isOwner={this.props.isOwner}
           feed={this.props.feed}
+          paused={this.props.paused}
           onPostAdded={this.props.onPostAdded}
           // onPostAdded={bind(this._onPostAdded, this)}
           onSettingsClicked={bind(this._navigateToSettings, this)}

@@ -81,6 +81,7 @@ class TransferOwnershipStepper extends Component {
       return (
         <div>
           <Button
+            disabled={this.props.paused}
             variant='contained'
             color='secondary'
             className={classes.button}
@@ -151,6 +152,7 @@ class TransferOwnershipStepper extends Component {
 TransferOwnershipStepper.propTypes = {
   classes: PropTypes.object,
   feedName: PropTypes.string.isRequired,
+  paused: PropTypes.bool.isRequired,
   onOwnershipTransfer: PropTypes.func.isRequired
 }
 

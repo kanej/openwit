@@ -29,7 +29,12 @@ class SettingsPanel extends Component {
   constructor (props) {
     super(props)
 
+    this.state = {
+      lockFlag: this.props.paused
+    }
+
     this._onBackToFeedClicked = this._onBackToFeedClicked.bind(this)
+    this._onLockSwitchClicked = this._onLockSwitchClicked.bind(this)
     this._onDestroyClicked = this._onDestroyClicked.bind(this)
   }
 
@@ -61,11 +66,11 @@ class SettingsPanel extends Component {
                 Stop new posts to the feed <strong>{this.props.feedName}</strong> and indicate to users no new posts should be expected currently.
               </Typography>
               <FormGroup row>
-                <FormControlLabel disabled control={<Switch value='checkedD' />} label='Lock' />
+                <FormControlLabel control={<Switch checked={this.state.lockFlag} onChange={this._onLockSwitchClicked} />} label='Lock' />
               </FormGroup>
             </Paper>
 
-            <TransferOwnershipStepper feedName={this.props.feedName} onOwnershipTransfer={this.props.onOwnershipTransfer} backToFeed={this._onBackToFeedClicked} />
+            <TransferOwnershipStepper paused={this.props.paused} feedName={this.props.feedName} onOwnershipTransfer={this.props.onOwnershipTransfer} backToFeed={this._onBackToFeedClicked} />
 
             <Paper className={classes.paper}>
               <Typography variant='headline' component='h3'>
@@ -97,6 +102,12 @@ class SettingsPanel extends Component {
     history.push(match.url.replace('/settings', ''))
   }
 
+  _onLockSwitchClicked (e) {
+    e.preventDefault()
+    this.setState({lockFlag: e.target.checked})
+    this.props.onLockToggled(e.target.checked)
+  }
+
   _onDestroyClicked (e) {
     e.preventDefault()
     this.props.onDestroy()
@@ -106,7 +117,9 @@ class SettingsPanel extends Component {
 
 SettingsPanel.propTypes = {
   feedName: PropTypes.string.isRequired,
+  paused: PropTypes.bool.isRequired,
   contractAddress: PropTypes.string.isRequired,
+  onLockToggled: PropTypes.func.isRequired,
   onOwnershipTransfer: PropTypes.func.isRequired,
   onDestroy: PropTypes.func.isRequired
 }
