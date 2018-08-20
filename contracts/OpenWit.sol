@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/lifecycle/Destructible.sol";
 
-contract OpenWit is Ownable {
+contract OpenWit is Destructible {
   
   struct Cid {
     uint8 version;

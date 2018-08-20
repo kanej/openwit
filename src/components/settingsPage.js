@@ -51,7 +51,8 @@ class SettingsPage extends Component {
           {...this.props}
           feedName={this.props.feed ? this.props.feed.title : null}
           contractAddress={this.props.feedAddress}
-          onOwnershipTransfer={this.props.onOwnershipTransfer} />
+          onOwnershipTransfer={this.props.onOwnershipTransfer}
+          onDestroy={this.props.onDestroy} />
       </div>
     )
   }
@@ -61,7 +62,8 @@ SettingsPage.propTypes = {
   requestStatus: PropTypes.string.isRequired,
   feedName: PropTypes.string,
   feedAddress: PropTypes.string,
-  onOwnershipTransfer: PropTypes.func.isRequired
+  onOwnershipTransfer: PropTypes.func.isRequired,
+  onDestroy: PropTypes.func.isRequired
 }
 
 export default SettingsPage

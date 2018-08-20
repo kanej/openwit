@@ -12,6 +12,7 @@ export const FETCH_FEED = 'FETCH_FEED'
 export const POST_TO_FEED = 'POST_TO_FEED'
 export const TRANSFER_OWNERSHIP = 'TRANSFER_OWNERSHIP'
 export const FEED_UPDATED = 'FEED_UPDATED'
+export const DESTROY_FEED = 'DESTROY_FEED'
 
 export const loadingAppStates = {
   INITIALIZING: 'INITIALIZING',
@@ -288,7 +289,7 @@ export function transferOwnership (newOwnerAccountAddress) {
         return false
       }
 
-      transferOwnershipSucceeded()
+      dispatch(transferOwnershipSucceeded())
     } catch (ex) {
       console.log(ex)
       dispatch(transferOwnershipFailed(ex.message))
@@ -296,5 +297,57 @@ export function transferOwnership (newOwnerAccountAddress) {
     }
 
     return true
+  }
+}
+
+export const destroyFeedStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function destroyFeedRequested () {
+  return {
+    type: DESTROY_FEED,
+    status: destroyFeedStatuses.REQUESTED
+  }
+}
+
+function destroyFeedFailed (errorMessage) {
+  return {
+    type: DESTROY_FEED,
+    status: destroyFeedStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+function destroyFeedSucceeded (errorMessage) {
+  return {
+    type: DESTROY_FEED,
+    status: destroyFeedStatuses.REQUEST_SUCCEEDED
+  }
+}
+
+export function destroyFeed () {
+  return async (dispatch, getState) => {
+    const { currentWeb3Account, feed } = getState()
+    dispatch(destroyFeedRequested())
+
+    try {
+      const result = OpenWitViewer.destroy({
+        currentWeb3Account,
+        contract: feed.contract
+      })
+
+      if (result.status === 'error') {
+        dispatch(destroyFeedFailed(result.errorMessage))
+      }
+
+      dispatch(destroyFeedSucceeded())
+    } catch (ex) {
+      console.log(ex)
+      dispatch(destroyFeedFailed(ex.errorMessage))
+    }
   }
 }

@@ -30,6 +30,7 @@ class SettingsPanel extends Component {
     super(props)
 
     this._onBackToFeedClicked = this._onBackToFeedClicked.bind(this)
+    this._onDestroyClicked = this._onDestroyClicked.bind(this)
   }
 
   render () {
@@ -74,7 +75,11 @@ class SettingsPanel extends Component {
                 Destroy the feed <strong>{this.props.feedName}</strong>, making its entries inaccessible. The feed will no longer be accessible through OpenWit, though entries may still exist on IPFS. This is irreversible.
               </Typography>
               <div>
-                <Button disabled variant='contained' color='secondary' className={classes.button}>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  className={classes.button}
+                  onClick={this._onDestroyClicked}>
                   Destroy Feed
                 </Button>
               </div>
@@ -91,12 +96,19 @@ class SettingsPanel extends Component {
     const {history, match} = this.props
     history.push(match.url.replace('/settings', ''))
   }
+
+  _onDestroyClicked (e) {
+    e.preventDefault()
+    this.props.onDestroy()
+    this._onBackToFeedClicked(e)
+  }
 }
 
 SettingsPanel.propTypes = {
   feedName: PropTypes.string.isRequired,
   contractAddress: PropTypes.string.isRequired,
-  onOwnershipTransfer: PropTypes.func.isRequired
+  onOwnershipTransfer: PropTypes.func.isRequired,
+  onDestroy: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(SettingsPanel)

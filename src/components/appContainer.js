@@ -10,7 +10,7 @@ import SettingsPage from './settingsPage'
 
 import '../App.css'
 
-import { loadingAppStates, fetchFeed, postToFeed, transferOwnership } from '../actions'
+import { loadingAppStates, fetchFeed, postToFeed, transferOwnership, destroyFeed } from '../actions'
 import AppLoadingPanel from './appLoadingPanel'
 
 class AppLoadingProcess extends Component {
@@ -35,7 +35,8 @@ class AppLoadingProcess extends Component {
       isOwner,
       loadOpenWitFeed,
       addPostToOpenWitFeed,
-      transferOwnership } = this.props
+      transferOwnership,
+      destroy } = this.props
 
     return (
       <Router>
@@ -50,7 +51,8 @@ class AppLoadingProcess extends Component {
                 {... feed}
                 isOwner={isOwner}
                 onOwnershipTransfer={transferOwnership}
-                loadOpenWitFeed={loadOpenWitFeed} />
+                loadOpenWitFeed={loadOpenWitFeed}
+                onDestroy={destroy} />
             } />
             <Route path='/feed/:contractAddress' render={(routeProps) =>
               <FeedPage
@@ -104,6 +106,9 @@ const mapDispatchToProps = dispatch => {
     },
     transferOwnership: accountAddress => {
       dispatch(transferOwnership(accountAddress))
+    },
+    destroy: () => {
+      dispatch(destroyFeed())
     }
   }
 }

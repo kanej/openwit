@@ -26,6 +26,7 @@ export default class OpenWitViewer {
 
       return {status: 'success', content: {feed, owner, contract, contractWatchCanceller}}
     } catch (e) {
+      console.error(e)
       return {status: 'error', errorMessage: e.message}
     }
   }
@@ -52,12 +53,32 @@ export default class OpenWitViewer {
   }
 
   static async transferOwnership (newOwnerAccountAddress, {contract, currentWeb3Account}) {
-    await contract.transferOwnership(newOwnerAccountAddress, { from: currentWeb3Account })
+    try {
+      await contract.transferOwnership(newOwnerAccountAddress, { from: currentWeb3Account })
 
-    return {status: 'success'}
+      return {status: 'success'}
+    } catch (e) {
+      return {status: 'error', errorMessage: e.message}
+    }
+  }
+
+  static async destroy ({contract, currentWeb3Account}) {
+    try {
+      console.log('Destroying feed', contract)
+      await contract.destroy({
+        from: currentWeb3Account,
+        gas: 300000
+      })
+
+      return {status: 'success'}
+    } catch (e) {
+      console.log(e)
+      return {status: 'error', errorMessage: e.message}
+    }
   }
 
   static async _loadFeedFromCidParts (feedReader, { version, codec, hash, size, digest }) {
+    console.log({ version, codec, hash, size, digest })
     const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
 
     const feed = await feedReader.loadFeedFromCid(cid)

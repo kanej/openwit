@@ -22,15 +22,19 @@ const setup = async () => {
   const cid = 'zdpuAqqmRH5FkZmsuWbopTpaXVDQ7PQyNDCd4GwHX6r17W7eU'
   const { version, codec, hash, size, digest } = getBytesFromCidv1(cid)
 
-  await contractInstance.setFeed(
-    version,
-    codec,
-    hash,
-    size,
-    digest,
-    { from: accounts[0] })
+  try {
+    await contractInstance.setFeed(
+      version,
+      codec,
+      hash,
+      size,
+      digest,
+      { from: accounts[0] })
 
-  console.log('OpenWit address:', contractInstance.address)
+    console.log('OpenWit address:', contractInstance.address)
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 setup()
