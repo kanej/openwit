@@ -4,14 +4,23 @@ import PropTypes from 'prop-types'
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
+import AppLoadingPanel from './appLoadingPanel'
 import HomePage from './homePage'
 import FeedPage from './feedPage'
 import SettingsPage from './settingsPage'
+import SetupFeedPage from './setupFeedPage'
 
 import '../App.css'
 
-import { loadingAppStates, fetchFeed, postToFeed, toggleLock, transferOwnership, destroyFeed } from '../actions'
-import AppLoadingPanel from './appLoadingPanel'
+import {
+  loadingAppStates,
+  createFeed,
+  fetchFeed,
+  postToFeed,
+  toggleLock,
+  transferOwnership,
+  destroyFeed,
+  loadFeedList } from '../actions'
 
 class AppLoadingProcess extends Component {
   render () {
@@ -37,14 +46,23 @@ class AppLoadingProcess extends Component {
       addPostToOpenWitFeed,
       toggleLock,
       transferOwnership,
-      destroy } = this.props
+      destroy,
+      createFeed } = this.props
 
     return (
       <Router>
         <div>
           <Switch>
             <Route exact path='/' render={(routeProps) =>
-              <HomePage {...routeProps} />
+              <HomePage {...routeProps}
+                loadFeedListRequestState={this.props.loadFeedListRequestState}
+                loadFeedList={this.props.loadFeedList}
+                feedRecords={this.props.feedRecords} />
+            } />
+            <Route exact path='/feed/new' render={(routeProps) =>
+              <SetupFeedPage
+                {...routeProps}
+                onCreateFeed={createFeed} />
             } />
             <Route path='/feed/:contractAddress/settings' render={(routeProps) =>
               <SettingsPage
@@ -92,8 +110,10 @@ const mapStateToProps = state => {
     loadingErrorMessage: state.loadingErrorMessage,
     currentWeb3Account: state.currentWeb3Account,
     feed: state.feed,
+    feedRecords: state.feedRecords,
     isOwner: isOwner,
-    postToFeed: state.postToFeed
+    postToFeed: state.postToFeed,
+    loadFeedListRequestState: state.actions.loadFeedList.requestStatus
   }
 }
 
@@ -101,19 +121,25 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     loadOpenWitFeed: contractAddress => {
-      dispatch(fetchFeed(contractAddress))
+      return dispatch(fetchFeed(contractAddress))
     },
     addPostToOpenWitFeed: postText => {
-      dispatch(postToFeed(postText))
+      return dispatch(postToFeed(postText))
     },
     toggleLock: isLocked => {
-      dispatch(toggleLock(isLocked))
+      return dispatch(toggleLock(isLocked))
     },
     transferOwnership: accountAddress => {
-      dispatch(transferOwnership(accountAddress))
+      return dispatch(transferOwnership(accountAddress))
     },
     destroy: () => {
-      dispatch(destroyFeed())
+      return dispatch(destroyFeed())
+    },
+    createFeed: (title, author) => {
+      return dispatch(createFeed(title, author))
+    },
+    loadFeedList: () => {
+      return dispatch(loadFeedList())
     }
   }
 }

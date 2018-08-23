@@ -22,6 +22,7 @@ class FeedReader {
   }
 
   async convertToOpenWitFeed (feed) {
+    const metadata = await feed.getMetadata()
     var iterator = feed.feedAsyncIterator()
 
     var isDone = false
@@ -29,13 +30,15 @@ class FeedReader {
     while (!isDone) {
       var v = await iterator.next()
       isDone = v.done
-      if (!isDone) {
+      if (!isDone && v.value) {
         messages.push(v.value)
       }
     }
 
     return {
       title: feed.name,
+      author: metadata.author,
+      hash: metadata.hash,
       posts: messages
     }
   }

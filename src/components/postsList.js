@@ -11,6 +11,10 @@ const styles = {
   },
   postCardContent: {
     textAlign: 'left'
+  },
+  noPostsMessage: {
+    marginTop: 40,
+    textAlign: 'center'
   }
 }
 
@@ -19,11 +23,9 @@ function PostsList (props) {
 
   if (!posts || posts.length === 0) {
     return (
-      <Card key={1}>
-        <CardContent className={classes.postCardContent}>
-          <p>No posts yet</p>
-        </CardContent>
-      </Card>
+      <div className={classes.noPostsMessage}>
+        <p>There are no posts yet</p>
+      </div>
     )
   }
 

@@ -6,11 +6,14 @@ import {
   FEED_UPDATED,
   TRANSFER_OWNERSHIP,
   TOGGLE_LOCK,
+  CREATE_FEED,
+  LOAD_FEED_LIST,
   loadingAppStates,
   fetchFeedStatuses,
   postToFeedStatuses,
   transferOwnershipStatuses,
-  toggleLockStatuses
+  toggleLockStatuses,
+  loadFeedListStatuses
 } from './actions'
 
 const openWitApp = (state, action) => {
@@ -23,6 +26,7 @@ const openWitApp = (state, action) => {
       web3: null,
       openWit: null,
       feedReader: null,
+      feedRecords: [],
       feed: {
         requestStatus: fetchFeedStatuses.UNLOADED,
         feedAddress: null,
@@ -37,6 +41,11 @@ const openWitApp = (state, action) => {
       transferOwnership: {
         requestStatus: transferOwnershipStatuses.UNINITIATED,
         newOwnerAccountAddress: null
+      },
+      actions: {
+        loadFeedList: {
+          requestStatus: loadFeedListStatuses.UNINITIATED
+        }
       }
     }
   }
@@ -58,6 +67,8 @@ const openWitApp = (state, action) => {
             web3: action.web3,
             currentWeb3Account: action.currentWeb3Account,
             openWit: action.openWit,
+            openWitRegistryContract: action.openWitRegistryContract,
+            registry: action.registry,
             feedReader: action.feedReader
           }
         case loadingAppStates.IPFS_LOAD_FAILED:
@@ -216,8 +227,47 @@ const openWitApp = (state, action) => {
         default:
           return {...state}
       }
+    case CREATE_FEED:
+      return {...state}
+    case LOAD_FEED_LIST:
+      switch (action.status) {
+        case loadFeedListStatuses.REQUESTED:
+          return {
+            ...state,
+            actions: {
+              ...state.actions,
+              loadFeedList: {
+                requestStatus: action.status
+              }
+            }
+          }
+        case loadFeedListStatuses.REQUEST_FAILED:
+          return {
+            ...state,
+            actions: {
+              ...state.actions,
+              loadFeedList: {
+                requestStatus: action.status,
+                errorMessage: action.errorMessage
+              }
+            }
+          }
+        case loadFeedListStatuses.REQUEST_SUCCEEDED:
+          return {
+            ...state,
+            feedRecords: action.feedRecords,
+            actions: {
+              ...state.actions,
+              loadFeedList: {
+                requestStatus: action.status
+              }
+            }
+          }
+        default:
+          return {...state}
+      }
     default:
-      return state
+      return {...state}
   }
 }
 

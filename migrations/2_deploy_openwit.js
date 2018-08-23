@@ -1,5 +1,5 @@
-var SimpleTwit = artifacts.require('./OpenWit.sol')
+var OpenWit = artifacts.require('./OpenWit.sol')
 
 module.exports = function (deployer) {
-  deployer.deploy(SimpleTwit)
+  deployer.deploy(OpenWit)
 }

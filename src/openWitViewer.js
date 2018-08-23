@@ -48,7 +48,6 @@ export default class OpenWitViewer {
       { from: currentWeb3Account })
 
     const updatedFeed = await feedReader.getFeed(feedName)
-    updatedFeed.author = { name: 'Cicero' }
 
     return {status: 'success', content: {feed: updatedFeed}}
   }
@@ -93,12 +92,58 @@ export default class OpenWitViewer {
     }
   }
 
+  static async createFeed (title, author, {currentWeb3Account, registry, feedReader}) {
+    try {
+      const feed = await feedReader.wit.createFeed({ name: title, author })
+      const feedHash = feed.getHash()
+
+      const { version, codec, hash, size, digest } = getBytesFromCidv1(feedHash)
+      console.log(registry)
+      const result = await registry.create(
+        version,
+        codec,
+        hash,
+        size,
+        digest,
+        {
+          from: currentWeb3Account,
+          value: 100
+        })
+
+      const newFeedAddress = result.logs[0].args.newAddress
+      console.log(newFeedAddress)
+      return {status: 'success', content: { newFeedAddress }}
+    } catch (e) {
+      console.log(e)
+      return {status: 'error', errorMessage: e.message}
+    }
+  }
+
+  static async getOpenWitFeedSummaries ({registry, openWit, feedReader}) {
+    try {
+      const feedRecords = []
+      const feedAddresses = await registry.getAllFeeds.call()
+
+      for (var contractAddress of feedAddresses) {
+        const feedContract = await openWit.at(contractAddress)
+        const [ version, codec, hash, size, digest ] = await feedContract.getFeed.call()
+        var {title, author} = await OpenWitViewer._loadFeedFromCidParts(feedReader, { version, codec, hash, size, digest })
+        feedRecords.push({title, author, contractAddress})
+      }
+
+      return { status: 'success', content: { feedRecords: feedRecords } }
+    } catch (e) {
+      console.log(e)
+
+      return {status: 'error', errorMessage: e.message}
+    }
+  }
+
   static async _loadFeedFromCidParts (feedReader, { version, codec, hash, size, digest }) {
     const cid = getCidv1FromBytes({ version, codec, hash, size, digest })
 
     const feed = await feedReader.loadFeedFromCid(cid)
 
-    feed.author = { name: 'Cicero' }
     return feed
   }
 }

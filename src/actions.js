@@ -4,16 +4,19 @@ import getIpfs from 'window.ipfs-fallback'
 import getFeedReader from './feedReader'
 
 import OpenWitContract from './contracts/OpenWit.json'
+import OpenWitRegistryContract from './contracts/OpenWitRegistry.json'
 import { fixTruffleContractCompatibilityIssue } from './utils/fixes'
 import OpenWitViewer from './openWitViewer'
 
 export const LOAD_APP = 'LOAD_APP'
+export const CREATE_FEED = 'CREATE_FEED'
 export const FETCH_FEED = 'FETCH_FEED'
 export const POST_TO_FEED = 'POST_TO_FEED'
 export const TRANSFER_OWNERSHIP = 'TRANSFER_OWNERSHIP'
 export const FEED_UPDATED = 'FEED_UPDATED'
 export const DESTROY_FEED = 'DESTROY_FEED'
 export const TOGGLE_LOCK = 'TOGGLE_LOCK'
+export const LOAD_FEED_LIST = 'LOAD_FEED_LIST'
 
 export const loadingAppStates = {
   INITIALIZING: 'INITIALIZING',
@@ -63,14 +66,16 @@ export function loadAppWeb3LoadingFailed (errorMessage) {
   }
 }
 
-export function loadAppLoaded ({web3, currentWeb3Account, openWit, feedReader}) {
+export function loadAppLoaded ({web3, currentWeb3Account, openWit, openWitRegistryContract, registry, feedReader}) {
   return {
     type: LOAD_APP,
     status: loadingAppStates.LOADED,
     web3,
     currentWeb3Account,
     openWit,
-    feedReader
+    openWitRegistryContract,
+    feedReader,
+    registry
   }
 }
 
@@ -88,7 +93,7 @@ export function initializeApp () {
       return dispatch(loadAppIpfsLoadingFailed(e.message))
     }
     dispatch(loadAppWeb3Loading({ipfs, ipfsId}))
-    let web3, currentWeb3Account, openWit, feedReader
+    let web3, currentWeb3Account, openWit, openWitRegistryContract, feedReader, registry
     try {
       web3 = (await getWeb3).web3
       const accounts = await web3.eth.getAccounts()
@@ -98,11 +103,17 @@ export function initializeApp () {
       openWit.setProvider(web3.currentProvider)
       fixTruffleContractCompatibilityIssue(openWit)
 
+      openWitRegistryContract = contract(OpenWitRegistryContract)
+      openWitRegistryContract.setProvider(web3.currentProvider)
+      fixTruffleContractCompatibilityIssue(openWitRegistryContract)
+
+      registry = await openWitRegistryContract.deployed()
+
       feedReader = await getFeedReader({ ipfs: ipfs })
     } catch (e) {
       return dispatch(loadAppWeb3LoadingFailed(e.message))
     }
-    return dispatch(loadAppLoaded({web3, currentWeb3Account, openWit, feedReader}))
+    return dispatch(loadAppLoaded({web3, currentWeb3Account, openWit, openWitRegistryContract, registry, feedReader}))
   }
 }
 
@@ -396,6 +407,109 @@ export function toggleLock (lockFlag) {
       return dispatch(toggleLockSucceeded(lockFlag))
     } catch (ex) {
       return dispatch(toggleLockFailed(ex.message))
+    }
+  }
+}
+
+export const createFeedStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function createFeedRequest (title, author) {
+  return {
+    type: CREATE_FEED,
+    status: createFeedStatuses.REQUESTED,
+    title,
+    author
+  }
+}
+
+function createFeedFailed (errorMessage) {
+  return {
+    type: CREATE_FEED,
+    status: createFeedStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+function createFeedSucceeded () {
+  return {
+    type: CREATE_FEED,
+    status: createFeedStatuses.REQUEST_SUCCEEDED
+  }
+}
+
+export function createFeed (title, author) {
+  return async (dispatch, getState) => {
+    const { currentWeb3Account, feedReader, registry } = getState()
+    dispatch(createFeedRequest(title, author))
+
+    try {
+      const result = await OpenWitViewer.createFeed(
+        title,
+        author,
+        { currentWeb3Account, feedReader, registry })
+
+      if (result.status === 'error') {
+        return dispatch(createFeedFailed(result.errorMessage))
+      }
+
+      return dispatch(createFeedSucceeded())
+    } catch (ex) {
+      return dispatch(toggleLockFailed(ex.message))
+    }
+  }
+}
+
+export const loadFeedListStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function loadFeedListRequest () {
+  return {
+    type: LOAD_FEED_LIST,
+    status: loadFeedListStatuses.REQUESTED
+  }
+}
+
+function loadFeedListFailed (errorMessage) {
+  return {
+    type: LOAD_FEED_LIST,
+    status: loadFeedListStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+function loadFeedListSucceeded (feedRecords) {
+  return {
+    type: LOAD_FEED_LIST,
+    status: loadFeedListStatuses.REQUEST_SUCCEEDED,
+    feedRecords
+  }
+}
+
+export function loadFeedList () {
+  return async (dispatch, getState) => {
+    const { registry, openWit, feedReader } = getState()
+    dispatch(loadFeedListRequest())
+
+    try {
+      const result = await OpenWitViewer.getOpenWitFeedSummaries({registry, openWit, feedReader})
+
+      if (result.status === 'error') {
+        return dispatch(loadFeedListFailed(result.errorMessage))
+      }
+
+      return dispatch(loadFeedListSucceeded(result.content.feedRecords))
+    } catch (ex) {
+      console.error(ex)
+      return dispatch(loadFeedListFailed(ex.message))
     }
   }
 }

@@ -23,8 +23,9 @@ const styles = {
 }
 
 function LetterAvatars (props) {
-  const { classes } = props
-  const letter = props.person.name.toUpperCase()[0]
+  const { classes, person } = props
+  const name = person || 'Unknown'
+  const letter = name.toUpperCase()[0]
   return (
     <div className={classes.row}>
       <Avatar className={classes.orangeAvatar}>{letter}</Avatar>
@@ -34,7 +35,7 @@ function LetterAvatars (props) {
 
 LetterAvatars.propTypes = {
   classes: PropTypes.object.isRequired,
-  person: PropTypes.object.isRequired
+  person: PropTypes.string.isRequired
 }
 
 export default withStyles(styles)(LetterAvatars)

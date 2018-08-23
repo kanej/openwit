@@ -57,7 +57,7 @@ function FeedIntroPanel (props) {
           <Grid container justify='flex-end'>
             <Grid item className={classes.leftCol}>
               <Avatar person={feed.author} />
-              <h3>{feed.author.name}</h3>
+              <h3>{feed.author}</h3>
               <h4>{feed.title}</h4>
               <a href='#home' onClick={onOpenWitHomeClicked}>OpenWit</a>
             </Grid>
