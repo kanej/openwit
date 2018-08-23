@@ -3,6 +3,11 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/lifecycle/Destructible.sol";
 import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
+/**
+ * @title OpenWit
+ * @dev This contract owns and governs an OpenWit microblog, allowing
+ * for updates against the blog and other administrative tasks.
+ */
 contract OpenWit is Destructible, Pausable {
   
   struct Cid {
@@ -29,31 +34,33 @@ contract OpenWit is Destructible, Pausable {
   }
 
   /**
-   * @dev Update the IPFS multihash representing the feed
-   * @param _version the cid version
-   * @param _codec the codec e.g. cbor
-   * @param _hash hashFunction code for the hash function used
-   * @param _size length of the digest
-   * @param _digest hash digest produced by hashing content using hash function
+   * @dev Update the IPFS multihash (in cid format) representing the feed's data.
+   * See https://github.com/ipld/cid for the spec of the format.
+   * @param version the cid version
+   * @param codec the cid codec e.g. cbor
+   * @param hash the cid hashFunction code for the hash function used
+   * @param size the cid length of the digest
+   * @param digest the cid hash digest produced by hashing content using hash function
    */
-  function setFeed(uint8 _version, uint8 _codec, uint8 _hash, uint8 _size, bytes32 _digest)
+  function setFeed(uint8 version, uint8 codec, uint8 hash, uint8 size, bytes32 digest)
   public
   onlyOwner
   whenNotPaused
   {
-    feed = Cid(_version, _codec, _hash, _size, _digest);
+    feed = Cid(version, codec, hash, size, digest);
     emit FeedUpdate(
       msg.sender,
-      _version,
-      _codec,
-      _hash, 
-      _size, 
-      _digest
+      version,
+      codec,
+      hash, 
+      size, 
+      digest
     );
   }
 
   /**
-   * @dev retrieve multihash associated with the feed
+   * @dev retrieve IPFS multihash  representing the feed's data
+   * @return the multihash as its constituent CID parts
    */
   function getFeed()
   public
