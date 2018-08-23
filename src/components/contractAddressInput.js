@@ -1,32 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
 
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
-
-const styles = theme => ({
-  root: {
-    ...theme.mixins.gutters(),
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2
-  },
-  container: {
-    // display: 'flex',
-    // flexWrap: 'wrap'
-  },
-  textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
-    // width: 400
-  }
-})
 
 let ContractAddressInput = function (props) {
+  const {classes} = props
   return (
-    <Paper className={props.classes.root} elevation={5}>
-      <Typography>Enter the contract address of an OpenWit Contract</Typography>
+    <div className={classes.viewerPanel}>
+      <Typography variant='display1'>
+        Or explore the wilds
+      </Typography>
+      <Typography>
+        You can view a ferral blog that doesn't follow this OpenWit community's rules, by entering
+        the blog's contract address:
+      </Typography>
       <form className={props.classes.container} autoComplete='off'>
         <div className={props.classes.margin}>
           <TextField
@@ -36,7 +24,8 @@ let ContractAddressInput = function (props) {
             onChange={props.onChange} />
         </div>
       </form>
-    </Paper>
+
+    </div>
   )
 }
 
@@ -45,4 +34,4 @@ ContractAddressInput.propTypes = {
   onChange: PropTypes.func.isRequired
 }
 
-export default withStyles(styles)(ContractAddressInput)
+export default ContractAddressInput

@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
 
 import { fetchFeed, loadFeedListStatuses } from '../actions'
 import ContractAddressInput from './contractAddressInput'
@@ -23,6 +24,14 @@ const styles = {
   },
   setupBlogBtn: {
     marginTop: 10
+  },
+  viewerPanel: {
+    margin: 30
+  },
+  userWelcomePanel: {
+    margin: 30,
+    padding: 20,
+    textAlign: 'center'
   }
 }
 
@@ -59,9 +68,14 @@ class HomePage extends Component {
                   It assumes you have MetaMask running on the local private network.
                 </Typography>
               </div>
-              <div className={classes.viewerPanel}>
-                <ContractAddressInput onChange={(e) => this._onContractAddressInput(e)} />
+              <div className={classes.userWelcomePanel}>
+                <Paper elevation={4} style={{padding: 10}}>
+                  <Typography variant='headline'>
+                    Welcome <strong>{this.props.currentWeb3Account}</strong>!
+                  </Typography>
+                </Paper>
               </div>
+
               <div className={classes.createABlogPanel}>
                 <Typography variant='display1'>
                 Join the (minimal) fun
@@ -80,6 +94,7 @@ class HomePage extends Component {
                     Setup Microblog
                 </Button>
               </div>
+              <ContractAddressInput classes={classes} onChange={(e) => this._onContractAddressInput(e)} />
               <FeedListPanel
                 classes={classes}
                 loadFeedListRequestState={this.props.loadFeedListRequestState}
@@ -130,6 +145,7 @@ class HomePage extends Component {
 }
 
 HomePage.propTypes = {
+  currentWeb3Account: PropTypes.string.isRequired,
   loadFeedListRequestState: PropTypes.string.isRequired,
   feedRecords: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,
