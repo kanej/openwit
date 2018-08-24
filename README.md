@@ -24,9 +24,13 @@ This has been developed as coursework for the Consensys Academy 2018 project.
 
 ## Introduction
 
-The app demonstrates an ethereum contract that represents a decentralized microblog feed. It allows you to create a microblog, post to it, lock it, transfer it to a new owner and destroy it. Changes to the blog are controlled through the ethereum contract but the data of the blog, that is its posts, are stored on [IPFS](https://ipfs.io). The censorship resistant nature of IPFS makes it ideal for publishing static data, the smaller wrapper contract on the ethereum blockchain gives enough mutability to allow for an 'updatable' blog.
+The app demonstrates an ethereum contract that represents a decentralized microblog feed. It allows you to create a microblog, post to it, lock it, transfer it to a new owner and destroy it. Changes to the blog are controlled through the ethereum contract but the data of the blog, that is its posts, are stored on [IPFS](https://ipfs.io). The censorship resistant nature of IPFS makes it ideal for publishing static data, the small wrapper contract on the ethereum blockchain gives enough mutability to allow for an 'updatable' blog.
 
 The second part of the app is a registry contract that gathers together a set of blogs and allows enforcement of a simple code of conduct by confiscating a financial stake if a blog is in breach of the rules.
+
+More detail about the app's features and use cases can be found in the doc:
+
+* [use_cases.md](./docs/use_cases.md)
 
 ## Background
 
@@ -37,6 +41,8 @@ Perhaps one way around this would be to restore the approach we took before the 
 This project is an attempt to build out a censorship resistant microblog (free speech for all, as long as your keeping it short) with the ability to create communities that have and can enforce their own standards. 
 
 ## Install
+
+The app is a javascript [truffle project](https://truffleframework.com), and can be installed with:
 
 ```bash
 npm install
@@ -89,9 +95,45 @@ Run storybook
 ```bash
 $ node .\node_modules\@storybook\react\bin\index.js -p 9090 -s public -c .\.storybook
 ```
+
+## Design
+
+The app consists of a React web frontend that interacts with the ethereum network and the ipfs network.
+
+The app can create microblogs by instantiating a new OpenWit contract on the ethereum network, and setting
+it with a pointer (a hash in CID format) to the blogs data stored on IPFS. The data is stored not as a file
+on IPFS but as a IPLD merkle graph.
+
+??EXAMPLE TO FOLLOW??
+
+A microblog can be created either directly or through a registry. A registry allows others to find your blog and allows for enforcement of an admittedly noddy rule of conduct. The rule of conduct can be enforced because the owner of a blog must stake ether to get it added to the registry. Any user who determines that
+the blog is in violation can issue a challenge through the registry. The registry then consults an oracle for that blog to determine if it is indeed in violation. 
+
+Further details on the design of the contracts can be found at:
+
+* [design_pattern_desicions.md](./docs/design_pattern_desicions.md)
+
 ## Security
 
-OpenWit is made up of one Ethereum contract currently. It has had no security measures put in place.
+OpenWit is made up of two Ethereum contracts: OpenWit.sol which represents a blog and OpenWitRegistry.sol which encapsulates a
+community of blogs.
+
+Both extend base contracts from the [Open Zepplin](https://openzeppelin.org/api/docs/open-zeppelin.html) project.
+
+Consideration of the known ethereum security attacks was given in writing the contracts based on the
+guidance from the [Consensys Smart Contracts Best Practices](https://consensys.github.io/smart-contract-best-practices/known_attacks/).
+
+More details about specific security measures put in place for both are available in the document:
+
+* [avoiding_common_attacks.md](./docs/avoiding_common_attacks.md)
+
+## Testing
+
+To test the smart contracts, with a running ganache instance, run
+
+```bash
+truffle test
+```
 
 ## TODO
 
