@@ -20,7 +20,8 @@ import {
   toggleLock,
   transferOwnership,
   destroyFeed,
-  loadFeedList } from '../actions'
+  loadFeedList,
+  reportPost } from '../actions'
 
 class AppLoadingProcess extends Component {
   render () {
@@ -62,7 +63,8 @@ class AppLoadingProcess extends Component {
             <Route exact path='/feed/new' render={(routeProps) =>
               <SetupFeedPage
                 {...routeProps}
-                onCreateFeed={createFeed} />
+                onCreateFeed={createFeed}
+                loadFeedList={this.props.loadFeedList} />
             } />
             <Route path='/feed/:contractAddress/settings' render={(routeProps) =>
               <SettingsPage
@@ -78,10 +80,13 @@ class AppLoadingProcess extends Component {
               <FeedPage
                 {... routeProps}
                 {... feed}
+                feedState={feed.state}
+                contractAddress={feed.feedAddress}
                 postToFeed={postToFeed}
                 isOwner={isOwner}
                 loadOpenWitFeed={loadOpenWitFeed}
-                onPostAdded={addPostToOpenWitFeed} />
+                onPostAdded={addPostToOpenWitFeed}
+                onReportPost={this.props.reportPost} />
             } />
             <Route>
               <div>
@@ -140,6 +145,9 @@ const mapDispatchToProps = dispatch => {
     },
     loadFeedList: () => {
       return dispatch(loadFeedList())
+    },
+    reportPost: (contractAddress) => {
+      return dispatch(reportPost(contractAddress))
     }
   }
 }

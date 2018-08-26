@@ -17,6 +17,7 @@ export const FEED_UPDATED = 'FEED_UPDATED'
 export const DESTROY_FEED = 'DESTROY_FEED'
 export const TOGGLE_LOCK = 'TOGGLE_LOCK'
 export const LOAD_FEED_LIST = 'LOAD_FEED_LIST'
+export const REPORT_POST = 'REPORT_POST'
 
 export const loadingAppStates = {
   INITIALIZING: 'INITIALIZING',
@@ -140,13 +141,14 @@ export function fetchFeedFailed (errorMessage) {
   }
 }
 
-export function fetchFeedSucceeded (feed, owner, paused, contract) {
+export function fetchFeedSucceeded (feed, owner, paused, state, contract) {
   return {
     type: FETCH_FEED,
     status: fetchFeedStatuses.REQUEST_SUCCEEDED,
     feed,
     owner,
     paused,
+    state,
     contract
   }
 }
@@ -160,7 +162,7 @@ export function feedUpdated (ipfsFeed) {
 
 export function fetchFeed (contractAddress) {
   return async (dispatch, getState) => {
-    const { feed, openWit, feedReader } = getState()
+    const { feed, registry, openWit, feedReader } = getState()
     if (feed.requestStatus === fetchFeedStatuses.REQUESTED) {
       console.info('Request already in play')
       return
@@ -175,15 +177,15 @@ export function fetchFeed (contractAddress) {
         dispatch(feedUpdated(ipfsFeed))
       }
 
-      const result = await OpenWitViewer.getOpenWitFeed(contractAddress, { openWit, feedReader, feedUpdatedCallback })
+      const result = await OpenWitViewer.getOpenWitFeed(contractAddress, { openWit, registry, feedReader, feedUpdatedCallback })
 
       if (result.status === 'error') {
         return dispatch(fetchFeedFailed(result.errorMessage))
       }
 
-      const {feed, owner, paused, contract} = result.content
+      const {feed, owner, paused, state, contract} = result.content
 
-      return dispatch(fetchFeedSucceeded(feed, owner, paused, contract))
+      return dispatch(fetchFeedSucceeded(feed, owner, paused, state, contract))
     } catch (ex) {
       console.log(ex)
       return dispatch(fetchFeedFailed(ex.message))
@@ -435,10 +437,11 @@ function createFeedFailed (errorMessage) {
   }
 }
 
-function createFeedSucceeded () {
+function createFeedSucceeded (newFeedAddress) {
   return {
     type: CREATE_FEED,
-    status: createFeedStatuses.REQUEST_SUCCEEDED
+    status: createFeedStatuses.REQUEST_SUCCEEDED,
+    newFeedAddress
   }
 }
 
@@ -457,9 +460,10 @@ export function createFeed (title, author) {
         return dispatch(createFeedFailed(result.errorMessage))
       }
 
-      return dispatch(createFeedSucceeded())
+      return dispatch(createFeedSucceeded(result.content.newFeedAddress))
     } catch (ex) {
-      return dispatch(toggleLockFailed(ex.message))
+      console.log(ex)
+      return dispatch(createFeedFailed(ex.message))
     }
   }
 }
@@ -510,6 +514,56 @@ export function loadFeedList () {
     } catch (ex) {
       console.error(ex)
       return dispatch(loadFeedListFailed(ex.message))
+    }
+  }
+}
+
+export const reportPostStatuses = {
+  UNINITIATED: 'UNINITIATED',
+  REQUESTED: 'REQUESTED',
+  REQUEST_FAILED: 'REQUEST_FAILED',
+  REQUEST_SUCCEEDED: 'REQUEST_SUCCEEDED'
+}
+
+function reportPostRequest (contractAddress) {
+  return {
+    type: REPORT_POST,
+    status: reportPostStatuses.REQUESTED,
+    contractAddress
+  }
+}
+
+function reportPostFailed (errorMessage) {
+  return {
+    type: REPORT_POST,
+    status: reportPostStatuses.REQUEST_FAILED,
+    errorMessage
+  }
+}
+
+function reportPostSucceeded () {
+  return {
+    type: REPORT_POST,
+    status: reportPostStatuses.REQUEST_SUCCEEDED
+  }
+}
+
+export function reportPost (contractAddress) {
+  return async (dispatch, getState) => {
+    const { registry, currentWeb3Account } = getState()
+    dispatch(reportPostRequest(contractAddress))
+
+    try {
+      const result = await OpenWitViewer.reportFeed({contractAddress, registry, currentWeb3Account})
+
+      if (result.status === 'error') {
+        return dispatch(reportPostFailed(result.errorMessage))
+      }
+
+      return dispatch(reportPostSucceeded())
+    } catch (ex) {
+      console.error(ex)
+      return dispatch(reportPostFailed(ex.message))
     }
   }
 }

@@ -50,7 +50,7 @@ class SetupFeedPage extends Component {
               <strong>The Rules</strong>
             </Typography>
             <ol>
-              <li>No post shall use the word 'bum'</li>
+              <li>No post shall use the word 'inheritance' as in "I like multiple inheritance"</li>
             </ol>
             <form>
               <div>
@@ -86,7 +86,10 @@ class SetupFeedPage extends Component {
   _onSetupClicked (e) {
     e.preventDefault()
 
-    this.props.onCreateFeed(this.state.title, this.state.author)
+    this.props.onCreateFeed(this.state.title, this.state.author).then((data) => {
+      this.props.loadFeedList()
+      this.props.history.push(`/feed/${data.newFeedAddress}`)
+    })
   }
 
   _onTitleChange (e) {
@@ -100,7 +103,8 @@ class SetupFeedPage extends Component {
 
 SetupFeedPage.propTypes = {
   history: PropTypes.object.isRequired,
-  onCreateFeed: PropTypes.func.isRequired
+  onCreateFeed: PropTypes.func.isRequired,
+  loadFeedList: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(SetupFeedPage)

@@ -50,6 +50,30 @@ function FeedIntroPanel (props) {
     )
   }
 
+  let openWitBadge
+  switch (props.feedState) {
+    case 'Nonexistant':
+      openWitBadge = null
+      break
+    case 'GoodStanding':
+      openWitBadge = (
+        <a href='#home' onClick={onOpenWitHomeClicked}>OpenWit Approved</a>
+      )
+      break
+    case 'UnderReview':
+      openWitBadge = (
+        <a href='#home' onClick={onOpenWitHomeClicked}>OpenWit Under Review</a>
+      )
+      break
+    case 'Banned':
+      openWitBadge = (
+        <a href='#home' onClick={onOpenWitHomeClicked}>Banned by OpenWit</a>
+      )
+      break
+    default:
+      openWitBadge = null
+  }
+
   return (
     <div className={classes.root}>
       <Grid container spacing={24}>
@@ -59,7 +83,7 @@ function FeedIntroPanel (props) {
               <Avatar person={feed.author} />
               <h3>{feed.author}</h3>
               <h4>{feed.title}</h4>
-              <a href='#home' onClick={onOpenWitHomeClicked}>OpenWit</a>
+              {openWitBadge}
             </Grid>
           </Grid>
 
@@ -92,7 +116,11 @@ function FeedIntroPanel (props) {
               )
             }
           })()}
-          <PostsList posts={feed.posts} />
+          <PostsList
+            isOwner={isOwner}
+            posts={feed.posts}
+            contractAddress={props.contractAddress}
+            onReportPost={props.onReportPost} />
         </Grid>
         <Grid item xs />
       </Grid>
@@ -108,7 +136,9 @@ FeedIntroPanel.propTypes = {
   isOwner: PropTypes.bool.isRequired,
   paused: PropTypes.bool.isRequired,
   feed: PropTypes.object,
-  postToFeed: PropTypes.object.isRequired
+  postToFeed: PropTypes.object.isRequired,
+  onReportPost: PropTypes.func.isRequired,
+  contractAddress: PropTypes.string.isRequired
 }
 
 export default withStyles(styles)(FeedIntroPanel)

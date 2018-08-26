@@ -6,11 +6,11 @@ import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
 
 import { fetchFeed, loadFeedListStatuses } from '../actions'
 import ContractAddressInput from './contractAddressInput'
 import FeedListPanel from './feedListPanel'
+import WelcomeUserPanel from './welcomeUserPanel'
 
 const styles = {
   titlePanel: {
@@ -51,7 +51,9 @@ class HomePage extends Component {
   }
 
   render () {
-    const {classes} = this.props
+    const {classes, currentWeb3Account} = this.props
+
+    const disableSetupBlog = !currentWeb3Account || currentWeb3Account === ''
 
     return (
       <div>
@@ -71,14 +73,7 @@ class HomePage extends Component {
                   It assumes you have MetaMask running on the local private network.
                 </Typography>
               </div>
-              <div className={classes.userWelcomePanel}>
-                <Paper elevation={4} style={{padding: 10}}>
-                  <Typography variant='headline'>
-                    Welcome <strong>{this.props.currentWeb3Account}</strong>!
-                  </Typography>
-                </Paper>
-              </div>
-
+              <WelcomeUserPanel classes={classes} currentWeb3Account={this.props.currentWeb3Account} />
               <div className={classes.createABlogPanel}>
                 <Typography variant='display1'>
                 Join the (minimal) fun
@@ -89,6 +84,7 @@ class HomePage extends Component {
                   confiscated if you break the rules</strong>. But at least there are no adverts. Yet.
                 </Typography>
                 <Button
+                  disabled={disableSetupBlog}
                   className={classes.setupBlogBtn}
                   variant='contained'
                   size='large'
@@ -148,7 +144,7 @@ class HomePage extends Component {
 }
 
 HomePage.propTypes = {
-  currentWeb3Account: PropTypes.string.isRequired,
+  currentWeb3Account: PropTypes.string,
   loadFeedListRequestState: PropTypes.string.isRequired,
   feedRecords: PropTypes.array.isRequired,
   history: PropTypes.object.isRequired,

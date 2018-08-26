@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
+import Button from '@material-ui/core/Button'
 
 const styles = {
   postBox: {
@@ -18,6 +19,20 @@ const styles = {
   }
 }
 
+function checkPostMeetsCodeOfConduct (post) {
+  var postParts = post
+    .replace(/\n/g, ' ')
+    .replace(/"/g, ' ')
+    .replace(/'/g, ' ')
+    .split(' ')
+
+  if (postParts.includes('inheritance')) {
+    return false
+  }
+
+  return true
+}
+
 function PostsList (props) {
   var { classes, posts } = props
 
@@ -29,17 +44,26 @@ function PostsList (props) {
     )
   }
 
-  var postCards = props.posts.map((post, index) => (
-    <Card className={classes.postBox} key={index}>
-      <CardContent className={classes.postCardContent}>
-        <p>{post}</p>
-      </CardContent>
-      <CardActions>
-        {/* <Button>Like</Button>
-        <Button>Repost</Button> */}
-      </CardActions>
-    </Card>
-  ))
+  var postCards = props.posts.map((post, index) => {
+    const meetsCodeOfConduct = checkPostMeetsCodeOfConduct(post)
+
+    const actions = props.isOwner || meetsCodeOfConduct
+      ? null
+      : (
+        <CardActions>
+          <Button onClick={(e) => props.onReportPost(props.contractAddress)}>Report</Button>
+        </CardActions>
+      )
+
+    return (
+      <Card className={classes.postBox} key={index}>
+        <CardContent className={classes.postCardContent}>
+          <p>{post}</p>
+        </CardContent>
+        {actions}
+      </Card>
+    )
+  })
 
   return (
     <div>
@@ -50,7 +74,10 @@ function PostsList (props) {
 
 PostsList.propTypes = {
   classes: PropTypes.object.isRequired,
-  posts: PropTypes.array.isRequired
+  contractAddress: PropTypes.string.isRequired,
+  posts: PropTypes.array.isRequired,
+  onReportPost: PropTypes.func.isRequired,
+  isOwner: PropTypes.bool.isRequired
 }
 
 export default withStyles(styles)(PostsList)

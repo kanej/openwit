@@ -1,5 +1,6 @@
 const ipfsAPI = require('ipfs-api')
 const Permawit = require('permawit')
+const MemoryStore = require('./src/utils/memoryStore')
 
 const fs = require('fs')
 const Web3 = require('web3')
@@ -44,7 +45,7 @@ const tennysonFeed = {
 }
 
 const keatsFeed = {
-  title: 'La Belle Dame sans Merci',
+  title: 'La Belle Dame',
   author: 'John Keats',
   posts: [
     'O what can ail thee, knight-at-arms,',
@@ -54,34 +55,12 @@ const keatsFeed = {
   ]
 }
 
-class MemoryStore {
-  constructor () {
-    this.feeds = {}
-  }
-
-  init () {
-    return new Promise((resolve) => {
-      resolve()
-    })
-  }
-
-  setFeed (name, ipfsHash) {
-    return new Promise((resolve) => {
-      this.feeds[name] = ipfsHash
-      resolve()
-    })
-  }
-
-  getFeed (name) {
-    return new Promise((resolve) => {
-      const ipfsHash = this.getFeedSync(name)
-      resolve(ipfsHash)
-    })
-  }
-
-  getFeedSync (name) {
-    return this.feeds[name]
-  }
+const badFeed = {
+  title: 'Misbehaving',
+  author: 'Anon',
+  posts: [
+    'No I really do think there are good reasons for multiple inheritance'
+  ]
 }
 
 const setupFeedOnIpfs = async (feedData, wit) => {
@@ -130,14 +109,17 @@ const setupTestData = async () => {
   const byronFeedHash = await setupFeedOnIpfs(byronFeed, wit)
   const tennysonFeedHash = await setupFeedOnIpfs(tennysonFeed, wit)
   const keatsFeedHash = await setupFeedOnIpfs(keatsFeed, wit)
+  const badFeedHash = await setupFeedOnIpfs(badFeed, wit)
 
   console.log('Byron Feed Hash: ', byronFeedHash)
   console.log('Tennyson Feed Hash: ', tennysonFeedHash)
   console.log('Keats Feed Hash: ', keatsFeedHash)
+  console.log('Bad Feed Hash: ', badFeedHash)
 
   await addFeedToRegistry({cid: byronFeedHash, openWitRegistry, accounts})
   await addFeedToRegistry({cid: tennysonFeedHash, openWitRegistry, accounts})
   await addFeedToRegistry({cid: keatsFeedHash, openWitRegistry, accounts})
+  await addFeedToRegistry({cid: badFeedHash, openWitRegistry, accounts})
 }
 
 setupTestData()

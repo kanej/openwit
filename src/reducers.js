@@ -8,12 +8,14 @@ import {
   TOGGLE_LOCK,
   CREATE_FEED,
   LOAD_FEED_LIST,
+  REPORT_POST,
   loadingAppStates,
   fetchFeedStatuses,
   postToFeedStatuses,
   transferOwnershipStatuses,
   toggleLockStatuses,
-  loadFeedListStatuses
+  loadFeedListStatuses,
+  reportPostStatuses
 } from './actions'
 
 const openWitApp = (state, action) => {
@@ -111,6 +113,7 @@ const openWitApp = (state, action) => {
               feed: action.feed,
               owner: action.owner,
               paused: action.paused,
+              state: action.state,
               contract: action.contract
             }
           }
@@ -259,6 +262,46 @@ const openWitApp = (state, action) => {
             actions: {
               ...state.actions,
               loadFeedList: {
+                requestStatus: action.status
+              }
+            }
+          }
+        default:
+          return {...state}
+      }
+    case REPORT_POST:
+      switch (action.status) {
+        case reportPostStatuses.REQUESTED:
+          return {
+            ...state,
+            actions: {
+              ...state.actions,
+              reportPost: {
+                requestStatus: action.status
+              }
+            }
+          }
+        case reportPostStatuses.REQUEST_FAILED:
+          return {
+            ...state,
+            actions: {
+              ...state.actions,
+              reportPost: {
+                requestStatus: action.status,
+                errorMessage: action.errorMessage
+              }
+            }
+          }
+        case reportPostStatuses.REQUEST_SUCCEEDED:
+          return {
+            ...state,
+            feed: {
+              ...state.feed,
+              state: 'UnderReview'
+            },
+            actions: {
+              ...state.actions,
+              reportPost: {
                 requestStatus: action.status
               }
             }

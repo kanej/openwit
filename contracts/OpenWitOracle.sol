@@ -66,7 +66,7 @@ contract OpenWitOracle is Ownable, Pausable {
     whenNotPaused
     {
         // Can't update state to requested
-        require(state != SharedStructs.RequestState.Requested);
+        require(state != SharedStructs.RequestState.Requested, "Can only pass or fail a request");
 
         SharedStructs.FeedCheckRequest memory request = requests[requestNo];
         
@@ -74,10 +74,11 @@ contract OpenWitOracle is Ownable, Pausable {
         require(request.requestNo != 0
             && request.contractAddress != address(0)
             && request.requester != address(0)
-            && request.requestingRegistry != address(0));
+            && request.requestingRegistry != address(0),
+            "The request did not exist");
 
         // check the request hasn't already been answered
-        require(request.state == SharedStructs.RequestState.Requested);
+        require(request.state == SharedStructs.RequestState.Requested, "Only unanswered requests can be updated");
 
         // Update the request in the Oracle
         request.state = state;
