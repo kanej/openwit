@@ -43,8 +43,8 @@ contract('OpenWitRegistry', (accounts) => {
     const registry = await OpenWitRegistry.deployed()
 
     const feeds = await registry.getAllFeeds.call()
-
     assert.isNotNull(feeds)
+    assert.isTrue(feeds.length > 0)
   })
 
   it('should stop a new feed being created if the stake is not met', async () => {

@@ -88,7 +88,8 @@
     "pre-commit": "^1.2.2",
     "run-with-testrpc": "^0.3.0",
     "solium": "^1.1.8",
-    "standard": "^11.0.1"
+    "standard": "^11.0.1",
+    "ipfs-api": "24.0.1"
   },
   "config": {
     "commitizen": {

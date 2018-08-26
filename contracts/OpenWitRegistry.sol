@@ -1,6 +1,8 @@
 pragma solidity ^0.4.24;
 
+import "./SharedStructs.sol";
 import "./OpenWit.sol";
+import "./OpenWitOracle.sol";
 
 /**
  * @title OpenWitRegistry
@@ -8,11 +10,32 @@ import "./OpenWit.sol";
  * and controls its governance.
  */
 contract OpenWitRegistry  {
+
+  address feedCheckOracleAddress;
+
+  constructor(address oracleAddress) public {
+    feedCheckOracleAddress = oracleAddress;
+  }
+
+  enum FeedState {
+    Nonexistant,
+    GoodStanding,
+    UnderReview,
+    Banned
+  }
+
   address[] public feeds;
+  mapping(address => FeedState) public feedStates;
 
   event FeedCreated(
     address indexed newAddress,
     address indexed owner
+  );
+
+  event FeedReviewRequested(
+    uint256 indexed requestNo,
+    address indexed feedAddres,
+    address indexed requester
   );
 
   /**
@@ -41,12 +64,58 @@ contract OpenWitRegistry  {
   returns (address)
   {
     address feedAddress = new OpenWit();
-    feeds.push(feedAddress);
-    emit FeedCreated(feedAddress, msg.sender);
+    
     OpenWit feed = OpenWit(feedAddress);
     feed.setFeed(version, codec, hash, size, digest);
     feed.transferOwnership(msg.sender);
+
+    feeds.push(feedAddress);
+    feedStates[feedAddress] = FeedState.GoodStanding;
+
+    emit FeedCreated(feedAddress, msg.sender);
+
     return feedAddress;
+  }
+
+  function requestConductCheck(address feedAddress)
+  public
+  {
+    // Ignore feeds not in the registry, and revert if already banned
+    require(feedStates[feedAddress] == FeedState.GoodStanding);
+
+    OpenWitOracle oracle = OpenWitOracle(feedCheckOracleAddress);
+    feedStates[feedAddress] = FeedState.UnderReview;
+    uint256 requestNo = oracle.requestFeedCheck(feedAddress, msg.sender, this);
+
+    emit FeedReviewRequested(requestNo, feedAddress, msg.sender);
+  }
+
+  function updateFeedStateBasedOnConductCheck(uint requestNo)
+  public
+  {
+    OpenWitOracle oracle = OpenWitOracle(feedCheckOracleAddress);
+
+    (
+      ,
+      address feedAddress,
+      ,
+      ,
+      SharedStructs.RequestState checkState,
+      uint256 blocknumber
+    ) = oracle.requests(requestNo);
+
+    require(feedStates[feedAddress] == FeedState.UnderReview);
+
+    if (checkState == SharedStructs.RequestState.Passed) {
+      feedStates[feedAddress] = FeedState.GoodStanding;
+    } else if (checkState == SharedStructs.RequestState.Failed) {
+      feedStates[feedAddress] = FeedState.Banned;
+    } else if (checkState == SharedStructs.RequestState.Requested) {
+      require(block.number > blocknumber + 240);
+      feedStates[feedAddress] = FeedState.GoodStanding;
+    } else {
+      revert();
+    }
   }
 
   /**

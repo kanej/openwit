@@ -3,8 +3,8 @@ import getWeb3 from './getWeb3'
 import getIpfs from 'window.ipfs-fallback'
 import getFeedReader from './feedReader'
 
-import OpenWitContract from './contracts/OpenWit.json'
-import OpenWitRegistryContract from './contracts/OpenWitRegistry.json'
+import OpenWitContract from '../build/contracts/OpenWit.json'
+import OpenWitRegistryContract from '../build/contracts/OpenWitRegistry.json'
 import { fixTruffleContractCompatibilityIssue } from './utils/fixes'
 import OpenWitViewer from './openWitViewer'
 
