@@ -81,7 +81,7 @@ contract OpenWitRegistry  {
   public
   {
     // Ignore feeds not in the registry, and revert if already banned
-    require(feedStates[feedAddress] == FeedState.GoodStanding);
+    require(feedStates[feedAddress] == FeedState.GoodStanding, "Feed not in registry or not in goodstanding");
 
     OpenWitOracle oracle = OpenWitOracle(feedCheckOracleAddress);
     feedStates[feedAddress] = FeedState.UnderReview;
@@ -104,17 +104,17 @@ contract OpenWitRegistry  {
       uint256 blocknumber
     ) = oracle.requests(requestNo);
 
-    require(feedStates[feedAddress] == FeedState.UnderReview);
+    require(feedStates[feedAddress] == FeedState.UnderReview, "Only under review requests can be processed");
 
     if (checkState == SharedStructs.RequestState.Passed) {
       feedStates[feedAddress] = FeedState.GoodStanding;
     } else if (checkState == SharedStructs.RequestState.Failed) {
       feedStates[feedAddress] = FeedState.Banned;
     } else if (checkState == SharedStructs.RequestState.Requested) {
-      require(block.number > blocknumber + 240);
+      require(block.number > blocknumber + 240, "Still within time window for oracle to reply");
       feedStates[feedAddress] = FeedState.GoodStanding;
     } else {
-      revert();
+      revert("Unexpected request state");
     }
   }
 
