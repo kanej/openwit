@@ -123,7 +123,6 @@ export default class OpenWitViewer {
     try {
       const feedRecords = []
       const feedAddresses = await registry.getAllFeeds.call()
-      console.log('feedAddresses', feedAddresses)
       for (var contractAddress of feedAddresses) {
         const feedContract = await openWit.at(contractAddress)
         const [ version, codec, hash, size, digest ] = await feedContract.getFeed.call()

@@ -49,7 +49,7 @@ const FeedListPanel = (props) => {
                 feedRecords.map(rec => {
                   return (
                     <Grid item xs={3} key={rec.contractAddress}>
-                      <Card style={{height: '100%'}}>
+                      <Card className={classes.blogRollCard} style={{height: '100%'}}>
                         <CardContent>
                           <Typography variant='title'>{rec.title}</Typography>
                           <Typography>by <em>{rec.author}</em></Typography>

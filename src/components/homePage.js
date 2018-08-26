@@ -22,6 +22,9 @@ const styles = {
   blogRollPanel: {
     margin: 30
   },
+  blogRollCard: {
+    marginTop: 20
+  },
   setupBlogBtn: {
     marginTop: 10
   },
