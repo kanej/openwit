@@ -69,11 +69,7 @@ contract OpenWitOracle is Ownable, Pausable {
     SharedStructs.FeedCheckRequest memory request = requests[requestNo];
         
     // check request exists
-    require(request.requestNo != 0 &&
-      request.contractAddress != address(0) &&
-      request.requester != address(0) &&
-      request.requestingRegistry != address(0),
-      "The request did not exist");
+    require(request.requestNo != 0 && request.contractAddress != address(0) && request.requester != address(0) && request.requestingRegistry != address(0), "The request did not exist");
 
     // check the request hasn't already been answered
     require(request.state == SharedStructs.RequestState.Requested, "Only unanswered requests can be updated");
