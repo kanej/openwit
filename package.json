@@ -103,7 +103,8 @@
       "it",
       "assert",
       "URL",
-      "fetch"
+      "fetch",
+      "web3"
     ]
   },
   "pre-commit": [

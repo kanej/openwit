@@ -42,7 +42,7 @@ contract OpenWitRegistry  {
    * @dev Require the caller to be sending the minimum stake
    */
   modifier meetsStake() {
-    require(msg.value >= 100, "Does not meet the minimum stake");
+    require(msg.value >= 0.1 ether, "Does not meet the minimum stake");
     _;
   }
 

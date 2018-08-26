@@ -1,4 +1,5 @@
 import {getCidv1FromBytes, getBytesFromCidv1} from './multihash'
+import web3 from 'web3'
 
 export default class OpenWitViewer {
   static async getOpenWitFeed (contractAddress, {openWit, registry, feedReader, feedUpdatedCallback}) {
@@ -109,7 +110,7 @@ export default class OpenWitViewer {
         digest,
         {
           from: currentWeb3Account,
-          value: 100
+          value: web3.utils.toWei('0.1', 'ether')
         })
 
       const newFeedAddress = result.logs[0].args.newAddress

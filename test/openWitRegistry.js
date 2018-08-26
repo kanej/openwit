@@ -18,7 +18,7 @@ contract('OpenWitRegistry', (accounts) => {
       digest,
       {
         from: accounts[0],
-        value: 100
+        value: web3.toWei(0.1, 'ether')
       })
 
     const newFeedAddress = result.logs[0].args.newAddress
@@ -59,7 +59,7 @@ contract('OpenWitRegistry', (accounts) => {
         digest,
         {
           from: accounts[0],
-          value: 99
+          value: web3.toWei(0.099, 'ether')
         })
     } catch (err) {
       assert.isTrue(/revert/.test(err.message))
