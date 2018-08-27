@@ -53,7 +53,7 @@ contract OpenWitRegistry  {
   // being requested on a blog through the registry
   event FeedReviewRequested(
     uint256 indexed requestNo,
-    address indexed feedAddres,
+    address indexed feedAddress,
     address indexed requester
   );
 

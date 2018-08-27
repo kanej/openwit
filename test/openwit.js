@@ -1,13 +1,12 @@
 var OpenWit = artifacts.require('./OpenWit.sol')
 const { getBytesFromCidv1, getCidv1FromBytes } = require('../src/multihash')
 
-// What is the fallback function doing?
-// How is money dealt with in destruction and ownership transfer?
-
 contract('OpenWit - as owner', function (accounts) {
   const cidv1 = 'zdpuAx8dA7mPWu91KixgDtBa5qH496iW6vmJzVpJqSKkgquoB'
   let openWitInstance
 
+  // Test that a blog contract can be updated with a reference to its
+  // data on IPFS
   it('should allow setting and updating of the ipfs hash of the feed', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
@@ -30,6 +29,8 @@ contract('OpenWit - as owner', function (accounts) {
     })
   })
 
+  // Test that after a feed transfer, the owner is the new owner
+  // rather than the old one
   it('should allow transfer of ownership of the feed contract', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
@@ -47,7 +48,8 @@ contract('OpenWit - as non-owner', function (accounts) {
   const cidv1 = 'zdpuAx8dA7mPWu91KixgDtBa5qH496iW6vmJzVpJqSKkgquoB'
   let openWitInstance
 
-  it('should allow retrieval of the owner of the contract', function () {
+  // Test that the IPFS hash encapsulating the feeds data is publicly queryable
+  it('should allow retrieval of the ipfs hash of the feed', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
 
@@ -69,7 +71,8 @@ contract('OpenWit - as non-owner', function (accounts) {
     })
   })
 
-  it('should allow retrieval of the ipfs hash of the feed', function () {
+  // Test that owner of a feed publicly queryable
+  it('should allow retrieval of the owner of the contract', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
 
@@ -79,7 +82,10 @@ contract('OpenWit - as non-owner', function (accounts) {
     })
   })
 
-  it('should revert an ipfs hash update', function () {
+  // IPFS hash update is limited only to the owner, as it is in effect the
+  // add blog post function. Test that we revert IPFS hash updates from
+  // users other than the owner.
+  it('should revert an ipfs hash update from a non-owner account', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
 
@@ -99,6 +105,9 @@ contract('OpenWit - as non-owner', function (accounts) {
     })
   })
 
+  // Ownership transfer can only be instigated by the owner.
+  // Test that we revert attempts at ownership transfer by
+  // other users.
   it('should revert attempted ownership transfer', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
@@ -115,6 +124,7 @@ contract('OpenWit - as non-owner', function (accounts) {
 contract('OpenWit - is destructible', function (accounts) {
   let openWitInstance
 
+  // Test that an open wit contract can be destroyed
   it('should be destroyable by owner', function () {
     return OpenWit.deployed().then(function (instance) {
       openWitInstance = instance
@@ -130,6 +140,7 @@ contract('OpenWit - is destructible', function (accounts) {
 contract('OpenWit - banned when paused', function (accounts) {
   const cidv1 = 'zdpuAx8dA7mPWu91KixgDtBa5qH496iW6vmJzVpJqSKkgquoB'
 
+  // Test that an IPFS hash update cannot happen while the blog is locked/paused
   it('should revert attempted updates of the ipfs hash of the feed', async () => {
     const instance = await OpenWit.deployed()
     await instance.pause({ from: accounts[0] })
@@ -152,6 +163,7 @@ contract('OpenWit - banned when paused', function (accounts) {
     assert.fail()
   })
 
+  // Test that a transfer of ownership is reverted while the blog is paused
   it('should revert attempted transfer of ownership', async () => {
     const instance = await OpenWit.deployed()
     // await instance.pause({ from: accounts[0] })
@@ -168,6 +180,7 @@ contract('OpenWit - banned when paused', function (accounts) {
 })
 
 contract('OpenWit - allowed when paused', function (accounts) {
+  // Test that the blog can be destroyed EVEN when the blog is paused
   it('should be destroyable by owner', async () => {
     const instance = await OpenWit.deployed()
     await instance.pause({ from: accounts[0] })
