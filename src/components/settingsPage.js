@@ -50,6 +50,7 @@ class SettingsPage extends Component {
         <SettingsPanel
           {...this.props}
           feedName={this.props.feed ? this.props.feed.title : null}
+          feedHash={this.props.feed ? this.props.feed.hash : null}
           paused={this.props.paused}
           contractAddress={this.props.feedAddress}
           onLockToggled={this.props.onLockToggled}

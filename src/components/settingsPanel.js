@@ -57,7 +57,11 @@ class SettingsPanel extends Component {
               </a>
               <Typography variant='body1' gutterBottom>
                 Contract Address: {this.props.contractAddress}
-              </Typography></div>
+              </Typography>
+              <Typography variant='body1' gutterBottom>
+                Current IPFS Hash: {this.props.feedHash}
+              </Typography>
+            </div>
             <Paper className={classes.paper}>
               <Typography variant='headline' component='h3'>
                 Lock Feed
@@ -117,6 +121,7 @@ class SettingsPanel extends Component {
 
 SettingsPanel.propTypes = {
   feedName: PropTypes.string.isRequired,
+  feedHash: PropTypes.string,
   paused: PropTypes.bool.isRequired,
   contractAddress: PropTypes.string.isRequired,
   onLockToggled: PropTypes.func.isRequired,
