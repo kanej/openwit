@@ -1,7 +1,14 @@
 Contract Design
 ===============
 
-There are two contracts:
+Factory pattern
+Oracle pattern
+Fail early
+Restricting access
+Mortal
+State Machine
+
+There are three contracts:
 
 1. OpenWit - which represents an individual blog
 2. OpenWitRegistry - which encapsulates a "community" of blogs that conform to a (hardcoded) Code of Conduct
