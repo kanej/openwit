@@ -15,7 +15,7 @@ contract OpenWitOracle is Ownable, Pausable {
 
   // An counter allowing the allocation of a incrementing
   // unique request number to each new request
-  uint RequestIndexCounter = 0;
+  uint256 private RequestIndexCounter = 0;
 
   // The event recorded when the oracle is
   // requested to perform a Code of Conduct check
