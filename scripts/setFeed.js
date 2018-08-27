@@ -19,7 +19,7 @@ const setup = async () => {
 
   const contractInstance = await openWitContract.deployed()
 
-  const cid = 'zdpuAqqmRH5FkZmsuWbopTpaXVDQ7PQyNDCd4GwHX6r17W7eU'
+  const cid = 'zdpuAoa3PHGNHjgqWqcKxcutRiAx6yVanUGvjJpqFLt2hMCc8'
   const { version, codec, hash, size, digest } = getBytesFromCidv1(cid)
 
   try {
@@ -31,7 +31,7 @@ const setup = async () => {
       digest,
       { from: accounts[0] })
 
-    console.log('OpenWit address:', contractInstance.address)
+    console.log('Example OpenWit address:', contractInstance.address)
   } catch (e) {
     console.error(e)
   }
