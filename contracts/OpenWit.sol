@@ -10,6 +10,7 @@ import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
  */
 contract OpenWit is Destructible, Pausable {
   
+  // An IPFS multihash in CID format
   struct Cid {
     uint8 version;
     uint8 codec;
@@ -18,6 +19,8 @@ contract OpenWit is Destructible, Pausable {
     bytes32 digest;
   }
 
+  // The event recorded on the update of the feeds
+  // underlying data (as stored on IPFS)
   event FeedUpdate(
     address indexed key,
     uint8 version,
@@ -27,11 +30,8 @@ contract OpenWit is Destructible, Pausable {
     bytes32 digest
   );
 
+  // The pointer the feeds data as an IPFS multihash
   Cid feed;
-
-  constructor() public {
-    owner = msg.sender;
-  }
 
   /**
    * @dev Update the IPFS multihash (in cid format) representing the feed's data.
