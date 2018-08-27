@@ -1,6 +1,6 @@
 const ipfsAPI = require('ipfs-api')
 const Permawit = require('permawit')
-const MemoryStore = require('./src/utils/memoryStore')
+const MemoryStore = require('../src/utils/memoryStore')
 
 const fs = require('fs')
 const Web3 = require('web3')
@@ -82,8 +82,8 @@ const addFeedToRegistry = async ({cid, openWitRegistry, accounts}) => {
       size,
       digest,
       {
-        from: accounts[0],
-        value: 100,
+        from: accounts[3],
+        value: web3.utils.toWei('0.1', 'ether'),
         gas: 3000000
       })
 

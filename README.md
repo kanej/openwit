@@ -52,8 +52,8 @@ The app is a javascript [truffle project](https://truffleframework.com), and can
 npm install
 ```
 
-To run the oracle service requires node.js and a running local IPFS node. The best way or running IPFS
-is through the `go-ipfs` client downloadable from:
+To run the oracle service requires node.js and a running local IPFS node. The best way of running IPFS
+is through `go-ipfs` downloadable from:
 
 > https://dist.ipfs.io/#go-ipfs
 
@@ -66,8 +66,9 @@ Usage
 To run the app locally you will need several components running:
 
 1. Ganache (local ethereum development blockain)
-2. A local ipfs node
+2. A local IPFS node
 3. The development webserver
+4. The Orace Service (a node.js app)
 
 To run ganache on the command line:
 
@@ -84,7 +85,15 @@ Import this mnemonic into metamask and set the development network to `Localhost
 To start an ipfs node, first [install ipfs](https://dist.ipfs.io/#go-ipfs), then:
 
 ```bash
-$ ipfs daemon
+$ ipfs init // setup an IPFS repo at ~/.ipfs
+$ ipfs daemon // run the local node
+```
+
+Before starting the app, make sure that the ethereum contracts are
+deployed to the ganache environment:
+
+```bash
+$ truffle migrate
 ```
 
 The development webserver runs on `port 3000` and is started with:
@@ -93,11 +102,10 @@ The development webserver runs on `port 3000` and is started with:
 $ npm run start
 ```
 
-Before browsing to the app, make sure that the ethereum contracts are
-deployed to the ganache environment:
+The Oracle Service can be run with:
 
 ```bash
-$ truffle migrate
+$ node ./oracle/oracleService.js
 ```
 
 To setup example data run (assuming ganache and ipfs are running):
@@ -106,18 +114,25 @@ To setup example data run (assuming ganache and ipfs are running):
 $ node ./scripts/setupTestData.js
 ```
 
-Refresh the OpenWit website if you have already went to `http://localhost:3000`
+To setup an example blog that is not part of any registry:
+
+```bash
+$ node ./scripts/setupWildUnregisteredBlog.js
+``` 
+
+Refresh the OpenWit website if you have already gone to `http://localhost:3000`
+and make sure you are logged into Metamask.
 
 ## Design
 
-The app consists of a React web frontend that interacts with the ethereum network and the ipfs network.
+The app consists of a React web frontend that interacts with the ethereum network and the IPFS network.
 
 The app can create microblogs by instantiating a new OpenWit contract on the ethereum network, and setting
-it with a pointer (a hash in CID format) to the blogs data stored on IPFS. The data is stored not as a file on IPFS but as a [IPLD merkle graph](https://ipld.io/).
+it with a pointer (a hash in CID format) to the blogs data stored on IPFS. The data is stored not as a file on IPFS but as an [IPLD merkle graph](https://ipld.io/).
 
-A microblog is represented by the `OpenWit.sol` cotract. It can be created either directly or through a registry. A registry allows others to find your blog and allows for enforcement of an admittedly noddy Code of Conduct. The registry is encoded as the `OpenWitRegistry.sol` contract. The Code of Conduct can be enforced as the owner of a blog must stake 0.1 ether to get it added to the registry. Any user who determines that the blog is in violation can issue a challenge through the registry. The registry then consults an oracle (the `OpenWitOracle.sol` contract) which is backed by an offchain node.js service, which determine if the given blog is indeed in violation.
+A microblog is represented by the `OpenWit.sol` cotract. It can be created either directly or through a registry. A registry allows others to find your blog and allows for enforcement of an admittedly noddy Code of Conduct. The registry is encoded as the `OpenWitRegistry.sol` contract. The Code of Conduct can be enforced as the owner of a blog must stake 0.1 ether to get it added to the registry. Any user who determines that the blog is in violation can issue a challenge through the registry. The registry then consults an oracle (the `OpenWitOracle.sol` contract) which is backed by an offchain node.js service, which determines if the given blog is indeed in violation.
 
-The code of conduct is hardcoded and is no more complicated than `No blog post can include the lowercase word 'inheritance'`.
+The code of conduct is hardcoded and is no more complicated than `No blog post can include the lowercase word 'inheritance'`, which should be a banned word in all programming languages.
 
 Further details on the design of the contracts can be found at:
 

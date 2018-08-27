@@ -22,9 +22,9 @@ class AppLoadingPanel extends Component {
       case loadingAppStates.INITIALIZING:
         return 'Booting ...'
       case loadingAppStates.IPFS_LOADING:
-        return 'Plugging into IPFS from across the stars ...'
+        return 'Plugging into IPFS from across the stars ... you have IPFS running locally and IPFS companion installed, right?'
       case loadingAppStates.WEB3_LOADING:
-        return 'Contacting Web3 through a hole in space time ...'
+        return 'Contacting Web3 through a hole in space time ... you might want to check metamask'
       case loadingAppStates.IPFS_LOAD_FAILED:
       case loadingAppStates.WEB3_LOAD_FAILED:
         return 'Failed loading web3: ' + this.props.loadingErrorMessage
