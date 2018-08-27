@@ -20,7 +20,6 @@ This has been developed as coursework for the Consensys Academy 2018 project.
 - [Install](#install)
 - [Usage](#usage)
 - [Security](#security)
-- [TODO](#todo)
 - [Maintainers](#maintainers)
 - [Contribute](#contribute)
 - [License](#license)
@@ -116,9 +115,7 @@ The app consists of a React web frontend that interacts with the ethereum networ
 The app can create microblogs by instantiating a new OpenWit contract on the ethereum network, and setting
 it with a pointer (a hash in CID format) to the blogs data stored on IPFS. The data is stored not as a file on IPFS but as a [IPLD merkle graph](https://ipld.io/).
 
-??EXAMPLE TO FOLLOW??
-
-A microblog is represented by the `OpenWit.sol` cotract. It can be created either directly or through a registry. A registry allows others to find your blog and allows for enforcement of an admittedly noddy Code of Conduct. The registry is encoded as the `OpenWitRegistry.sol` contract. The Code of Conduct can be enforced as the owner of a blog must stake ether to get it added to the registry. Any user who determines that the blog is in violation can issue a challenge through the registry. The registry then consults an oracle (the `OpenWitOracle.sol` contract) which is backed by an offchain node.js service, which determine if the given blog is indeed in violation.
+A microblog is represented by the `OpenWit.sol` cotract. It can be created either directly or through a registry. A registry allows others to find your blog and allows for enforcement of an admittedly noddy Code of Conduct. The registry is encoded as the `OpenWitRegistry.sol` contract. The Code of Conduct can be enforced as the owner of a blog must stake 0.1 ether to get it added to the registry. Any user who determines that the blog is in violation can issue a challenge through the registry. The registry then consults an oracle (the `OpenWitOracle.sol` contract) which is backed by an offchain node.js service, which determine if the given blog is indeed in violation.
 
 The code of conduct is hardcoded and is no more complicated than `No blog post can include the lowercase word 'inheritance'`.
 
@@ -153,10 +150,6 @@ To test the smart contracts, with a running ganache instance, run
 ```bash
 truffle test
 ```
-
-## TODO
-
-See the [TODO file](./todo.md).
 
 ## Maintainers
 
