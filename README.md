@@ -10,7 +10,7 @@ An attempt at a simple micro-blogging system running on Ethereum for change cont
 
 This has been developed as coursework for the Consensys Academy 2018 project.
 
-** Reviewers! Please start by [reading over the reviews notes](./docs/reviewer_notes.md) **
+** Reviewers! Please start by [reading over the notes for reviewers](./docs/reviewer_notes.md) **
 -------------------------------------------------------------------------------------------
 
 ## Table of Contents

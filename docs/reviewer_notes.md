@@ -13,14 +13,14 @@ Project Overview
 
 This app is not one of the suggested ideas (I don't know what I was thinking either), instead I decided to look at what a twitter clone on ethereum might look like.
 
-The frontend is a truffle project built on react, the backend is three interacting ethereum contracts and one lib can be found under the contracts directory:
+The frontend is a truffle project built on react, the backend is three interacting ethereum contracts and one lib that can be found under the contracts directory:
 
 1. [OpenWit.sol](../contracts/OpenWit.sol) - representing (and deployable on its own) a single blog, the contract governs the blog, but the data of the blog (the text of the entries) is stored off chain on [IPFS](https://ipfs.io)
 2. [OpenWitRegistry.sol](../contracts/OpenWitRegistry.sol) - a contract encapsulating the idea of a community of blogs all governed by a hardcoded and smart contract enforceable Code of Conduct.
 3. [OpenWitOracle.sol](../contracts/OpenWitOracle.sol) - an oracle that determines whether a blog (an OpenWit contract) is in violation of the Code of Conduct
 4. [SharedStructs.sol](../contracts/SharedStructs.sol) - some shared Structs and state enums that are used by both the registry and the oracle
 
-The frontend website points automatically to a deployed OpenWitRegistry. New blogs can be created through it. Owners can update their blogs and perform admin functions (destroy, lock and transfer ownership). Any logged in user can request a Code of Conduct review on the entire blog.
+The frontend website points automatically to a deployed OpenWitRegistry. New blogs can be created through the registry, it requires a `0.1 ether` stake from the creator. A registry gathers a group of blogs together and provides a mechanism for enforcing a Code of Conduct. Owners can update their blogs and perform admin functions (destroy, lock and transfer ownership). Any logged in user can request a Code of Conduct review on a blog for the registry.
 
 The Code of Conduct is intentionally stupid, the only rule is that blog entries can't include the word `inheritance`. A Code of Conduct Review is requested through the registry contract, which delegates to the Oracle contract. An off chain Oracle Service implemented as a node.js process (located at [./oracle/oracleService.js](../oracle/oracleService.js)) monitors the Oracle contract for requests and answers them, it also then triggers an update of the blogs status as considered by the registry. A blog in the registry moves through the following states:
 
@@ -28,7 +28,7 @@ The Code of Conduct is intentionally stupid, the only rule is that blog entries 
 
 Getting banned burns the blogs stake of 0.1 ether that is put down on blog creation through the registry (and the price of the OpenWit approved badge on the webpage).
 
-The blogs entries are not stored on chain. Instead they are pushed to a locally running IPFS node. The data is not stored as a file on IPFS but as a merkle tree using [IPLD](https://ipld.io); so each blog entry is its own node on IPFS and points at the next post, if you are so inclined you can look at the structure by taking the IPFS Hash stored against the OpenWit contract (viewable on the settings page) and querying your local IPFS node:
+The blogs entries are not stored on chain. Instead they are pushed to a locally running IPFS node. The data is not stored as a file on IPFS but as a merkle tree using [IPLD](https://ipld.io); so each blog entry is its own IPLD object on IPFS and points at the next blog entry. If you are so inclined you can look at the structure by taking the IPFS Hash stored against the OpenWit contract (viewable on the settings page) and querying your local IPFS node:
 
 ```bash
 $ ipfs dag get zdpuAoa3PHGNHjgqWqcKxcutRiAx6yVanUGvjJpqFLt2hMCc8 | jq .
@@ -56,7 +56,7 @@ $ ipfs init # to setup a new ipfs repo - default ~/.ipfs
 $ ipfs daemon # to actually start a local IPFS node
 ```
 
- The OpenWit website attempts to connect to IPFS first by testing for `window.ipfs`. This will be available if you have installed [ipfs-companion](https://github.com/ipfs-shipyard/ipfs-companion) which is a plugin for Firefox and Chrome that will give your browser IPFS powers in the same way that Metamask does for Ethereum. If `window.ipfs` is not available the OpenWit website will fallback to booting an client-side IPFS node in the page itself. The downside is that connections between that node and other nodes (for instance your local go-ipfs node to which the oracle connects) are less predictable and consistent. I would recommend installing ipfs-companion and connecting it to your local node.
+ The OpenWit website attempts to connect to IPFS first by testing for `window.ipfs`. This will be available if you have installed [ipfs-companion](https://github.com/ipfs-shipyard/ipfs-companion) which is a plugin for Firefox and Chrome that will give your browser IPFS powers in the same way that Metamask does for Ethereum. If `window.ipfs` is not available the OpenWit website will fallback to booting an client-side IPFS node in the page itself. The downside is that connections between that node and other nodes (for instance your local go-ipfs node to which the oracle connects) are less predictable and consistent. I would recommend installing ipfs-companion and connecting it to your running local IPFS node.
 
 The architecture of the app then:
 
@@ -66,6 +66,9 @@ Pointers for the Grading Rubric
 -------------------------------
 
 If I can be so bold and to save some time.
+
+The `Final Project Guide` suggests providing Use Cases for projects that have went rogue
+and implemented their own idea. The Use Cases for the app are documented in [use_cases.md](./use_cases.md), along with a walkthrough of each.
 
 #### User Interface Requirements
 
@@ -79,9 +82,9 @@ If I can be so bold and to save some time.
 
 There are 5 or more tests for each of the contracts:
 
-1. [OpenWit.sol](../contracts/OpenWit.sol) - is covered by tests in [./tests/openwit.js](../tests/openwit.js)
-2. [OpenWitRegistry.sol](../contracts/OpenWitRegistry.sol) - is covered by tests in [./tests/openwitregistry.js](../tests/openwitregistry.js)
-3. [OpenWitOracle.sol](../contracts/OpenWitOracle.sol) - is covered by tests in [./tests/openwitoracle.js](../tests/openwitoracle.js)
+1. [OpenWit.sol](../contracts/OpenWit.sol) - is covered by tests in [./test/openwit.js](../tests/openwit.js)
+2. [OpenWitRegistry.sol](../contracts/OpenWitRegistry.sol) - is covered by tests in [./tests/openwitregistry.js](../test/openwitRegistry.js)
+3. [OpenWitOracle.sol](../contracts/OpenWitOracle.sol) - is covered by tests in [./tests/openwitOracle.js](../test/openwitoracle.js)
 
 The tests can be run with:
 
