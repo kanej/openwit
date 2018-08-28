@@ -58,7 +58,7 @@ is through `go-ipfs` downloadable from:
 > https://dist.ipfs.io/#go-ipfs
 
 The most reliable way for a webapp to interact with the local IPFS node is using the firefox/chrome
-[IPFS Companion plugin](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch). It should connect with your local running IPFS instance automatically but you can check under the settings.
+[IPFS Companion plugin](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch). It should connect with your local running IPFS instance automatically but you can check under the settings. If you are unable to get IFPS running and connected with IPFS companion, some of the more advanced features reliant on the Oracle service will not work, and data populated with the `setupTestData.js` may not appear; put another way, if you are unable to run and connect a local IPFS node, don't populate the test data and only run through the basic use cases of creating a blog. This approach will use a fallback inbrowser js-ipfs node, but changes may not persist or be communicated outside your local web session.
 
 Usage
 -----
@@ -108,7 +108,7 @@ The Oracle Service can be run with:
 $ node ./oracle/oracleService.js
 ```
 
-To setup example data run (assuming ganache and ipfs are running):
+To setup example data run (assuming ipfs is running locally and you have been able to bridge to it with the `IPFS Companion` web plugin for Chrom or Firefox):
 
 ```bash
 $ node ./scripts/setupTestData.js
