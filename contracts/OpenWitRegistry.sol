@@ -57,6 +57,12 @@ contract OpenWitRegistry  {
     address indexed requester
   );
 
+  // The event recorded when a stake burn fails
+  // at the end of Code of Conduct review
+  event StakeBurnFailure(
+    uint256 indexed requestNo
+  );
+
   /**
    * @dev Require the caller to be sending the minimum stake
    */
@@ -139,6 +145,14 @@ contract OpenWitRegistry  {
       feedStates[feedAddress] = FeedState.GoodStanding;
     } else if (checkState == SharedStructs.RequestState.Failed) {
       feedStates[feedAddress] = FeedState.Banned;
+
+      // Burn the stake, ignore failure as we want the feed state
+      // updated to banned anyway
+      bool success = address(0).send(0.1 ether);
+
+      if(!success) {
+        emit StakeBurnFailure(requestNo);
+      }
     } else if (checkState == SharedStructs.RequestState.Requested) {
       require(block.number > blocknumber + 240, "Still within time window for oracle to reply");
       feedStates[feedAddress] = FeedState.GoodStanding;

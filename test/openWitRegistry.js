@@ -81,7 +81,6 @@ contract('OpenWitRegistry - Code of Conduct Review', (accounts) => {
   const cidv1 = 'zdpuAx8dA7mPWu91KixgDtBa5qH496iW6vmJzVpJqSKkgquoB'
   const { version, codec, hash, size, digest } = getBytesFromCidv1(cidv1)
 
-  const REQUESTED = 0
   const PASSED = 1
   const FAILED = 2
 
