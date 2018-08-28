@@ -5,14 +5,14 @@ Use Cases
 
 - [Setup for basic Use Cases](#Simple-Setup-for-basic-Use-Cases)
 - [Create a new blog linked to the OpenWitRegistry](#Create-a-new-blog-linked-to-the-OpenWitRegistry)
-- [Add a new post to your blog](Add-a-new-post-to-your-blog)
-- [Lock your blog](Lock-your-blog)
-- [Transfer ownership of your blog to another account](Transfer-ownership-of-your-blog-to-another-account)
-- [Destroy your blog](Destroy-your-blog)
-- [View an existing blog not connected with a Registry](View-an-existing-blog-not-connected-with-a-Registry)
+- [Add a new post to your blog](#Add-a-new-post-to-your-blog)
+- [Lock your blog](#Lock-your-blog)
+- [Transfer ownership of your blog to another account](#Transfer-ownership-of-your-blog-to-another-account)
+- [Destroy your blog](#Destroy-your-blog)
+- [Report a blog in violation of the registries Code of Conduct](#Report-a-blog-in-violation-of-the-registries-Code-of-Conduct)
 
 Setup for Use Cases
--------------------------
+-------------------
 
 IPFS can be a little tempremental. You should run a local `go-ipfs` node with the `IPFS Companion` browser plugin. Please refer to the install and usage sections of the [README.md](../README.md) for more details.
 

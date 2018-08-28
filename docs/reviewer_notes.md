@@ -74,9 +74,10 @@ and implemented their own idea. The Use Cases for the app are documented in [use
 
 1. Run app on a dev server locally - you can run the OpenWit website with `npm run start`. Ensure ganache is running, for more details see the Basic Setup of the README.md
 2. Should be able to visit a URL and interact with the app - website should be running on [http://localhost:3000](http://localhost:3000)
-3.1 Display the current account - the homepage will show your web3 account if you are logged in as part of the welcome message
-3.2 Sign transactions using metamask - if you are logged in try running through creating a blog by clicking the `Setup Microblog` button
-3.3 Reflect updates to the contract state - creating a blog and adding entries should show UI updates
+3.
+  * Display the current account - the homepage will show your web3 account if you are logged in as part of the welcome message
+  * Sign transactions using metamask - if you are logged in try running through creating a blog by clicking the `Setup Microblog` button
+  * Reflect updates to the contract state - creating a blog and adding entries should show UI updates
 
 #### Testing
 

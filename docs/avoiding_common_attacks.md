@@ -9,7 +9,7 @@ I have endeavoured to keep the contracts simple and focussed on their purpose. T
 external calls, while the registry updates no state after its one external call in `requestConductCheck`.
 A potential need for the oracle to update the registry on a request being passed or failed is avoided
 by having the Oracle Service both update the Oracle contract with the answer, then having the service
-trigger the update in the registry which reads from the Oracle and updates appropraitely.
+trigger the update in the registry which reads from the Oracle and updates appropriately.
 
 `Integer Overflow/Underflow` is possible for the request number that the oracle uses for indexing and
 referring to requests. However as the Oracle is the only contract that can update the private `RequestIndexCounter` variable and its only update mechanism is increment, its size as a `uint256`
