@@ -5,6 +5,7 @@ import "openzeppelin-solidity/contracts/lifecycle/Pausable.sol";
 
 /**
  * @title OpenWit
+ * @author kanej
  * @dev This contract owns and governs an OpenWit microblog, allowing
  * for updates against the blog and other administrative tasks.
  */
@@ -34,6 +35,7 @@ contract OpenWit is Destructible, Pausable {
   Cid feed;
 
   /**
+   * @notice Update the blog's entries
    * @dev Update the IPFS multihash (in cid format) representing the feed's data.
    * See https://github.com/ipld/cid for the spec of the format.
    * @param version the cid version
@@ -83,6 +85,7 @@ contract OpenWit is Destructible, Pausable {
   }
 
   /**
+   * @notice Transfer ownership of the blog
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
    * @param _newOwner The address to transfer ownership to.
    */

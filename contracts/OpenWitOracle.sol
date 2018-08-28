@@ -7,6 +7,7 @@ import "./SharedStructs.sol";
 
 /**
  * @title OpenWitOracle
+ * @author kanej
  * @dev This contract allows onchain contracts to verify
  * whether the feed of an OpenWit blog contract meets the
  * Code of Conduct.

@@ -293,7 +293,7 @@ export function transferOwnership (newOwnerAccountAddress) {
 
     try {
       console.log('transferring ownership to new owner ' + newOwnerAccountAddress)
-      const result = OpenWitViewer.transferOwnership(newOwnerAccountAddress, {
+      const result = await OpenWitViewer.transferOwnership(newOwnerAccountAddress, {
         currentWeb3Account,
         contract: feed.contract
       })
@@ -345,7 +345,7 @@ export function destroyFeed () {
     dispatch(destroyFeedRequested())
 
     try {
-      const result = OpenWitViewer.destroy({
+      const result = await OpenWitViewer.destroy({
         currentWeb3Account,
         contract: feed.contract
       })

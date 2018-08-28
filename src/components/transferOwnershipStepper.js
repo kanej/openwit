@@ -145,7 +145,9 @@ class TransferOwnershipStepper extends Component {
   }
 
   async _handleConfirm (e) {
-    await this.props.onOwnershipTransfer(this.state.newOwnerContractAddress)
+    this.props.onOwnershipTransfer(this.state.newOwnerContractAddress).then(() => {
+      this.props.backToFeed()
+    })
   }
 }
 

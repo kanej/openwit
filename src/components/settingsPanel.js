@@ -74,7 +74,12 @@ class SettingsPanel extends Component {
               </FormGroup>
             </Paper>
 
-            <TransferOwnershipStepper paused={this.props.paused} feedName={this.props.feedName} onOwnershipTransfer={this.props.onOwnershipTransfer} backToFeed={this._onBackToFeedClicked} />
+            <TransferOwnershipStepper
+              history={this.props.history}
+              paused={this.props.paused}
+              feedName={this.props.feedName}
+              onOwnershipTransfer={this.props.onOwnershipTransfer}
+              backToFeed={this._onBackToFeedClicked} />
 
             <Paper className={classes.paper}>
               <Typography variant='headline' component='h3'>
@@ -114,8 +119,9 @@ class SettingsPanel extends Component {
 
   _onDestroyClicked (e) {
     e.preventDefault()
-    this.props.onDestroy()
-    this._onBackToFeedClicked(e)
+    this.props.onDestroy().then(() => {
+      this.props.history.push('/')
+    })
   }
 }
 

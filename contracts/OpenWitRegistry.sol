@@ -7,6 +7,7 @@ import "./OpenWitOracle.sol";
 
 /**
  * @title OpenWitRegistry
+ * @author kanej
  * @dev This contract creates an OpenWit community of microblogs
  * and controls its governance.
  */
@@ -72,6 +73,7 @@ contract OpenWitRegistry  {
   }
 
   /**
+   * @notice Create a blog on the OpenWit registry. 0.1 ether required as a stake. Please see code of conduct.
    * @dev Create a new OpenWit microblog associated with this registry.
    * The caller passes the IPFS hash (cid format) of the blogs data
    * for initialization.
@@ -103,6 +105,7 @@ contract OpenWitRegistry  {
   }
 
   /**
+   * @notice Request a Code of Conduct review for this blog
    * @dev Request a review of specific OpenWit microblog by an oracle to determine
    * if it is meeing the rules of conduct.
    * @param feedAddress address of the blogs OpenWit contract
