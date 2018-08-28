@@ -46,7 +46,7 @@ const FeedListPanel = (props) => {
               alignItems='stretch'
               spacing={24}>
               {
-                feedRecords.map(rec => {
+                feedRecords.filter(record => record.feedState !== 'Banned').map(rec => {
                   return (
                     <Grid item xs={3} key={rec.contractAddress}>
                       <Card className={classes.blogRollCard} style={{height: '100%'}}>

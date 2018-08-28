@@ -127,10 +127,13 @@ export default class OpenWitViewer {
       const feedRecords = []
       const feedAddresses = await registry.getAllFeeds.call()
       for (var contractAddress of feedAddresses) {
+        const feedStateInt = await registry.feedStates.call(contractAddress)
+        const feedState = OpenWitViewer._mapStateIntToString(feedStateInt)
         const feedContract = await openWit.at(contractAddress)
+
         const [ version, codec, hash, size, digest ] = await feedContract.getFeed.call()
         var {title, author} = await OpenWitViewer._loadFeedFromCidParts(feedReader, { version, codec, hash, size, digest })
-        feedRecords.push({title, author, contractAddress})
+        feedRecords.push({title, author, contractAddress, feedState})
       }
 
       return { status: 'success', content: { feedRecords: feedRecords } }
