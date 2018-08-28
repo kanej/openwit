@@ -58,7 +58,7 @@ is through `go-ipfs` downloadable from:
 > https://dist.ipfs.io/#go-ipfs
 
 The most reliable way for a webapp to interact with the local IPFS node is using the firefox/chrome
-[IPFS Companion plugin](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch). It should connect with your local running instance.
+[IPFS Companion plugin](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch). It should connect with your local running IPFS instance automatically but you can check under the settings.
 
 Usage
 -----
@@ -80,7 +80,7 @@ This will start ganache with the mnemonic:
 
 > ostrich high museum cheap fade about much voyage exist common deposit distance
 
-Import this mnemonic into metamask and set the development network to `Localhost 8545`.
+Import this mnemonic into Metamask and set the development network to `Localhost 8545`.
 
 To start an ipfs node, first [install ipfs](https://dist.ipfs.io/#go-ipfs), then:
 
@@ -112,12 +112,6 @@ To setup example data run (assuming ganache and ipfs are running):
 
 ```bash
 $ node ./scripts/setupTestData.js
-```
-
-To setup an example blog that is not part of any registry:
-
-```bash
-$ node ./scripts/setupWildUnregisteredBlog.js
 ``` 
 
 Refresh the OpenWit website if you have already gone to `http://localhost:3000`

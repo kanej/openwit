@@ -11,36 +11,10 @@ Use Cases
 - [Destroy your blog](Destroy-your-blog)
 - [View an existing blog not connected with a Registry](View-an-existing-blog-not-connected-with-a-Registry)
 
-Setup for basic Use Cases
+Setup for Use Cases
 -------------------------
 
-Before running through the use cases ensure you have a running setup:
-
-In one terminal tab run ganache from the root of the project with
-
-```bash
-npm run dev:ganache
-```
-
-With ganache running, migrate the contracts with
-
-```bash
-truffle migrate
-```
-
-Use Firefox or Chrome with the Metamask plugin and restore an account with the seed phrase:
-
-> ostrich high museum cheap fade about much voyage exist common deposit distance
-
-Make sure Metamask is connected to the **local private network** on port 8545.
-
-Run the OpenWit website on the devserver in another tab with:
-
-```bash
-npm run start
-```
-
-Navigate to the OpenWit website at `http://localhost:3000`
+IPFS can be a little tempremental. You should run a local `go-ipfs` node with the `IPFS Companion` browser plugin. Please refer to the install and usage sections of the [README.md](../README.md) for more details.
 
 Create a new blog linked to the OpenWitRegistry
 -----------------------------------------------
@@ -48,7 +22,7 @@ Create a new blog linked to the OpenWitRegistry
 A registry ties multiple blogs together, and allows enforcement of a Code of Conduct through
 a smart contract.
 
-A empty registry will have been deployed with the setup migration. To create a new blog:
+An empty registry will have been deployed with the setup migration. If you ran the test data setup script you may see some example blogs on the homepage. To create a new blog:
 
 1. Go to the homepage at `http://localhost:3000`
 2. Click on the `Setup Microblog` button to go to the Setup Page (note the homepage recognises which account you are logged in as in Metamask)
@@ -106,7 +80,7 @@ To lock the blog, starting on the blogs page and logged in as the owner in Metam
 
 3. Confirm the Metamask transaction
 
-4. The `Start Transfer` button should now be grayed out. If you go back to the blog page, you should see a message indicating it is locked and the new entry input box should be disables:
+4. The `Start Transfer` button should now be grayed out. If you go back to the blog page, you should see a message indicating it is locked and the new entry input box should be disabled.
 
 The unlock process follows the same steps.
 
@@ -124,19 +98,23 @@ To transfer ownership, starting on the blog's page and logged in as the owner in
 
 2. Go to the settings page for the blog using the `Cog` button on the top right
 
-![alt text](./images/lock_blog_1.png "Enter text")
+3. Click the `Start Transfer` button
 
-2. Click the `Start Transfer` button
+![alt text](./images/transfer_ownership_2.png "Enter text")
 
-![alt text](./images/lock_blog_2.png "Enter text")
+4. Enter in the account address of the new owner
 
-3. Enter in the account address of the new owner
-
-![alt text](./images/lock_blog_3.png "Enter text")
+![alt text](./images/transfer_ownership_3.png "Enter text")
 
 4. Click the confirm button
 
 5. Confirm the Metamask transaction
+
+6. You should now see the `Not Authorised` screen
+
+![alt text](./images/transfer_ownership_4.png "Enter text")
+
+7. Switching to the new account and going to the blog should now show the input and setting options that only an owner should see.
 
 Destroy your blog
 -----------------
@@ -144,12 +122,65 @@ Destroy your blog
 An owner always has the option of destroying the blog. This destroys the contract on the ethereum network,
 and hence removes the pointer to the data (blog posts) on IPFS, but they may remain on IPFS, it is indellible so take care in what you post.
 
-View an existing blog not connected with a Registry
----------------------------------------------------
+1. On the page of a blog you own, go to the settings page for the blog using the `Cog` button on the top right
 
-Any user should be able, given the address of an OpenWit microblog contract, to view that feed. Accounts other than the owner will not be able to add a new entry in the blog.
+2. Click the `Destroy` button
+
+![alt text](./images/destroy_1.png "Destroy")
+
+3. Confirm the Metamask transaction
+
+4. You will be taken to the home page but clicking back **and refreshing** will show that the blog is no longer accessible:
+
+![alt text](./images/destroy_1.png "Gone")
 
 Report a blog in violation of the registries Code of Conduct
 ------------------------------------------------------------
 
-TBD
+If a blog writer breaks the Code of Conduct (includes the lowercase word `inheritance` in a post), then any user (other than the owner of the blog), should be able to report the violation.
+
+Before running through this use case ensure, in addition to ganache and the dev webserver:
+
+IPFS is running:
+
+```bash
+ipfs daemon
+```
+
+The oracle service is running:
+
+```bash
+node ./oracle/oracleService.js
+```
+
+If you run the setup test data script it will create a blog that violates the rules:
+
+```bash
+node ./scripts/setupTestData.js 
+```
+
+To report a blog then, starting on the homepage:
+
+1. Navigate to the blogs page, `Misbehaving` in the test data:
+
+![alt text](./images/report_1.png "Report")
+
+2. Click the `report` button against the offending entry
+
+![alt text](./images/report_2.png "Report")
+
+3. Confirm the Metamask transaction
+
+4. The blog UI will update to show it is `Under Review`
+
+![alt text](./images/report_3.png "Report")
+
+5. The oracle service should process the request
+
+![alt text](./images/report_4.png "Report")
+
+6. A refresh of the page will show it is banned
+
+![alt text](./images/report_5.png "Report")
+
+The home page will no longer show the feed either.
